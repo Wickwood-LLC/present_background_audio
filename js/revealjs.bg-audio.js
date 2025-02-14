@@ -3,6 +3,7 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
     playing: false,
     backup_config: {},
     deck: null,
+    current_audio: null,
     init: function(deck) {
         this.deck = deck;
         let reveal_element = deck.getRevealElement();
@@ -16,6 +17,16 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
             child.addEventListener('click', function (event){
                 plugin.startAudio(this);
             });
+        });
+        deck.on('slidechanged', (event) => {
+            if (plugin.current_audio) {
+                plugin.current_audio.pause();
+            }
+        });
+        deck.on('slidetransitionend', (event) => {
+            if (plugin.current_audio) {
+                plugin.current_audio.play();
+            }
         });
     },
     backupConfigs: function(configs_items) {
@@ -49,6 +60,7 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
                 plugin.backupConfigs(['autoSlide', 'autoSlideStoppable', 'controls'], config);
                 plugin.deck.configure({autoSlide: 0, autoSlideStoppable: false, controls: false});
                 audio.play();
+                plugin.current_audio = audio;
                 audio.addEventListener("ended", (event) => {
                     plugin.stopAudio()
                 });
@@ -56,6 +68,7 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
         }
     },
     stopAudio: function() {
+        this.current_audio = null;
         this.restoreConfigs(['autoSlide', 'autoSlideStoppable', 'controls']);
     }
 
