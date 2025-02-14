@@ -73,8 +73,12 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
         if (audio_source) {
             let audio = new Audio(audio_source);
             if (audio) {
-                plugin.controlConfigs();
-                audio.play();
+                audio.addEventListener("loadeddata", (event) => {
+                    // Start playing once the media is ready.
+                    // Otherwise it was having a clipping at the beginning of the audio playing.
+                    audio.play();
+                    plugin.controlConfigs();
+                });
                 plugin.current_audio = audio;
                 audio.addEventListener("ended", (event) => {
                     plugin.stopAudio()
