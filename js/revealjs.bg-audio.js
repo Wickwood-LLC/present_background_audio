@@ -29,6 +29,16 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
                 plugin.current_audio.play();
             }
         });
+        deck.on('autoslideresumed', (event) => {
+            if (plugin.current_audio) {
+                plugin.current_audio.play();
+            }
+        });
+        deck.on('autoslidepaused', (event) => {
+            if (plugin.current_audio) {
+                plugin.current_audio.pause();
+            }
+        });
     },
     controlConfigs: function () {
         let config = this.deck.getConfig();
