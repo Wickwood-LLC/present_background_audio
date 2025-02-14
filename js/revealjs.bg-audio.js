@@ -10,10 +10,10 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
         let reveal_element = deck.getRevealElement();
         let plugin = this;
         // Get all start buttons
-        const bg_start_buttons = reveal_element.querySelectorAll('[data-bg-audio-start-button]');
+        const start_buttons = reveal_element.querySelectorAll('[data-bg-audio-start-button]');
 
         // Loop through the buttons and attach click event listener
-        bg_start_buttons.forEach(child => {
+        start_buttons.forEach(child => {
             child.classList.add('background-audio-start-button');
             child.addEventListener('click', function (event){
                 plugin.startAudio(this);
