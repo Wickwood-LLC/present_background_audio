@@ -9,7 +9,7 @@ use Drupal\present\Plugin\RevealJSPlugin\ConfigurableRevealJSPluginBase;
 
 #[RevealJSPlugin(
   id: 'background_audio',
-  label: new TranslatableMarkup('Background Auido'),
+  label: new TranslatableMarkup('Background Audio'),
   revealjs_plugin_name: 'RevealBackgroundAudio',
 )]
 class BackgroundAudio extends ConfigurableRevealJSPluginBase {
