@@ -1,0 +1,6 @@
+reveal-bg-audio:
+  js:
+    js/revealjs.bg-audio.js: {}
+  css:
+    base:
+      css/revealjs.bg-audio.css: {}
