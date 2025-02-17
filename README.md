@@ -1,0 +1,1 @@
+Provides Background Audio plugin for the Reavel.js presentations by the Present module.
