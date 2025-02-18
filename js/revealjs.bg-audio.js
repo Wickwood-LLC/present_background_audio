@@ -4,7 +4,7 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
     backup_config: {},
     deck: null,
     current_audio: null,
-    configs_to_control: {autoSlide: 0, autoSlideStoppable: false, controls: false, keyboard: false},
+    configs_to_control: {autoSlide: 1, controls: false, keyboard: false},
     init: function(deck) {
         this.deck = deck;
         let reveal_element = deck.getRevealElement();
