@@ -4,6 +4,7 @@
   Drupal.behaviors.audio_guide = {
     attach: function(context, settings) {
       once('wavesurfer', '.audio-guide-track').forEach(function (element) {
+        const hidden_input = element.nextElementSibling
         const common_region_min_width = 0.1;
         let config = JSON.parse(element.getAttribute('data-configs'));
         config.container = element;
@@ -43,7 +44,7 @@
         const randomColor = () => `rgba(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)}, 0.5)`
 
 
-        let region_configs = JSON.parse(element.getAttribute('data-regions'));
+        let region_configs = JSON.parse(hidden_input.value);
         // Create a region
         let regions = [];
         ws.on('decode', function (duration) {

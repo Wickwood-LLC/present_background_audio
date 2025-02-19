@@ -49,7 +49,6 @@ class AudioGuide extends FormElementBase {
             'url' => $element['#audio_url'],
           ]
         ),
-        'data-regions' => $encoded_region_data,
       ],
     ];
 
