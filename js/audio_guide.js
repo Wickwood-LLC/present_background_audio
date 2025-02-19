@@ -9,10 +9,17 @@
         // Initialize the Regions plugin
         const regions_plugin = WaveSurfer.Regions.create();
         const timeline = WaveSurfer.Timeline.create();
+        const zoom_plugin = WaveSurfer.Zoom.create({
+          // the amount of zoom per wheel step, e.g. 0.5 means a 50% magnification per scroll
+          scale: 0.5,
+          // Optionally, specify the maximum pixels-per-second factor while zooming
+          maxZoom: 500,
+        });
         // Add the plugin to the WaveSurfer instance
         config.plugins = [
           regions_plugin,
           timeline,
+          zoom_plugin,
         ];
         // Create a WaveSurfer instance
         const ws = WaveSurfer.create(config);
