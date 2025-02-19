@@ -59,11 +59,77 @@ class PresentationAudioGuideForm extends EntityForm {
       $form['#title'] = $this->t('<em>Presentation Audio Guide Studio for</em> @title', [
         '@title' => $presentation->label(),
       ]);
-    }   
+    }    
+    
+    /** @var \Drupal\present\Plugin\RevealJSPlugin\RevealJSPluginManager */
+    $plugin_manager = \Drupal::service('plugin.manager.revealjs_plugins');
+    /** @var \Drupal\present\Plugin\RevealJSPlugin\ConfigurableRevealJSPluginBase */
+    $background_audio = $plugin_manager->getPlugin('background_audio', $presentation);
+
+    $slides = $presentation->getSlides();
+    $regions = [];
+    $transition_width = 0.8;
+
+    $start = 0;
+    $slide_number = 1;
+    foreach ($slides as $slide) {
+      $slide_duration = !empty($slide['autoslide']) ? intval($slide['autoslide']) / 1000 : 0;
+      $end = $start + $slide_duration;
+      $regions[] = [
+        'start' => $start,
+        'end' => $end,
+        'content' => 'Slide #' . $slide_number,
+        'drag' => $slide_number === 1 ? false : true,
+        'resize' => true,
+        'type' => 'slide',
+      ];
+
+      $dom = new \DOMDocument();
+      $dom->loadHTML($slide['content']);
+
+      $xpath = new \DOMXPath($dom);
+      // Query elements with the class "fragment"
+      $fragments = $xpath->query('//*[contains(@class, "fragment")]');
+      foreach ($fragments as $fragment_index => $fragment) {
+        /** @var \DOMElement $fragment */
+        $fragment_duration = !empty($fragment->getAttribute('data-autoslide')) ? intval($fragment->getAttribute('data-autoslide')) / 1000 : 0;
+        $start = $end;
+        $end = $start + $fragment_duration;
+        $regions[] = [
+          'start' => $start,
+          'end' => $end,
+          'content' => 'Fragment #' . $fragment_index + 1,
+          'drag' => true,
+          'resize' => true,
+          'type' => 'fragment',
+        ];
+      }
+
+      if ($slide_number != count($slides)) {
+        $start = $end;
+        $end = $start + $transition_width;
+        $regions[] = [
+          'start' => $start,
+          'end' => $end,
+          'content' => '⇝ Transition #' . $slide_number,
+          'drag' => false,
+          'resize' => false,
+          'color' => 'rgba(100, 100, 100, 0.8)',
+          'type' => 'transition',
+          'fixed_size' => $transition_width,
+          'minLength' => $transition_width, // This may not be needed.
+          'maxLength' => $transition_width, // This may not be needed.
+        ];
+      }
+      $start = $end;
+      
+      $slide_number++;
+    }
     
     $form['audio_guide'] = [
       '#type' => 'pba_audio_guide',
-      '#presentation' => $presentation,
+      '#audio_url' => $background_audio->getConfiguration()['audio_source'],
+      '#default_value' => json_encode($regions),
     ];
     return $form;
   }
