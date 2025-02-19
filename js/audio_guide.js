@@ -4,6 +4,7 @@
   Drupal.behaviors.audio_guide = {
     attach: function(context, settings) {
       once('wavesurfer', '.audio-guide-track').forEach(function (element) {
+        const region_min_width = 0.1;
         let config = JSON.parse(element.getAttribute('data-configs'));
         config.container = element;
         // Initialize the Regions plugin
@@ -77,6 +78,8 @@
             if (region.previous_region.fixed_size) {
               region.previous_region.setOptions({start: region.start - region.previous_region.fixed_size});
             }
+            preventRegionCollapsing(region.previous_region, 'end');
+            preventOverlapping(region.previous_region, 'end');
             updatePreviousRegion(region.previous_region);
           }
         }
@@ -87,15 +90,99 @@
             if (region.next_region.fixed_size) {
               region.next_region.setOptions({end: region.end + region.next_region.fixed_size});
             }
+            preventRegionCollapsing(region.next_region, 'start');
+            preventOverlapping(region.next_region, 'start');
             updateNextRegion(region.next_region);
           }
         }
+
+        /**
+         * Ensure the region not becomming less than minimum width.
+         *
+         * @param {*} region 
+         * @param {*} side 
+         */
+        function preventRegionCollapsing(region, side) {
+          if (side === 'start') {
+            if (region.start > region.end - region_min_width) {
+              region.setOptions({start: region.end - region_min_width});
+            }
+          }
+          else if (side === 'end') {
+            if (region.end < region.start + region_min_width) {
+              region.setOptions({end: region.start + region_min_width});
+            }
+          }
+        }
+
+        /**
+         * Ensure the region go beyon bounderies of previous and next regions.
+         *
+         * @param {*} region 
+         * @param {*} side
+         */
+        function preventOverlapping(region, side) {
+          let limit;
+          if (side === 'start' && region.previous_region) {
+            limit = region.previous_region.start + region_min_width;
+            if (region.start < limit) {
+              region.setOptions({start: limit});
+            }
+          }
+          else if (side === 'end' && region.next_region) {
+            limit = region.next_region.end - region_min_width;
+            if (region.end > limit) {
+              region.setOptions({end: limit});
+            }
+          }
+          else {
+            // Dragging
+            if (region.previous_region) {
+              // Don't allow this go beyond making the previous region less than minim width.
+              let limit = region.previous_region.start + region_min_width;
+              if (region.start < limit) {
+                region.setOptions({start: limit});
+              }
+            }
+            if (region.next_region) {
+              // Don't allow this go beyond making the next region less than minim width.
+              limit = region.next_region.end - region_min_width;
+              if (region.end > limit) {
+                region.setOptions({end: limit});
+              }
+            }
+          }
+        }
+
+        /**
+         * Keep watching while regions are resized and dragged.
+         */
         regions_plugin.on('region-update', (region, side) => {
+          // First ensure that this region not collapsing.
+          preventRegionCollapsing(region, side);
+          // Then ensure it does not go beyond previous and next regions.
+          preventOverlapping(region, side);
+          let limit;
           if (region.fixed_size) {
+            // This is fixed sized region like transitions.
             if (side === 'start') {
+              if (region.next_region) {
+                // Don't allow to crush next region.
+                limit = region.next_region.end - region_min_width - region.fixed_size;
+                if (region.start > limit) {
+                  region.setOptions({start: limit});
+                }
+              }
               region.setOptions({end: region.start + region.fixed_size});
             }
             if (side === 'end') {
+              if (region.previous_region) {
+                // Don't allow to crush previous region.
+                limit = region.previous_region.start + region_min_width + region.fixed_size;
+                if (region.end < limit) {
+                  region.setOptions({end: limit});
+                }
+              }
               region.setOptions({start: region.end - region.fixed_size});
             }
           }
