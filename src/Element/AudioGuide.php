@@ -21,6 +21,7 @@ class AudioGuide extends FormElementBase {
         [$class, 'preRender'],
       ],
       '#presentation' => NULL,
+      '#transition_width' => 0.8,
       '#options' => [],
       '#attributes' => [],
       '#theme' => 'pba_audio_guide',
@@ -79,18 +80,18 @@ class AudioGuide extends FormElementBase {
 
       if ($slide_number != count($slides)) {
         $start = $end;
-        $end = $start + 0.8;
+        $end = $start + $element['#transition_width'];
         $regions[] = [
           'start' => $start,
           'end' => $end,
-          'content' => 'Transition #' . $slide_number,
-          'drag' => true,
+          'content' => '⇝ Transition #' . $slide_number,
+          'drag' => false,
           'resize' => false,
-          'color' => 'rgba(100, 100, 100, 0.5)',
+          'color' => 'rgba(100, 100, 100, 0.8)',
           'type' => 'transition',
-          'fixed_size' => 0.8,
-          'minLength' => 0.8, // This may not be needed.
-          'maxLength' => 0.8, // This may not be needed.
+          'fixed_size' => $element['#transition_width'],
+          'minLength' => $element['#transition_width'], // This may not be needed.
+          'maxLength' => $element['#transition_width'], // This may not be needed.
         ];
       }
       $start = $end;
