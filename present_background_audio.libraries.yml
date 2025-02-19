@@ -4,3 +4,22 @@ reveal-bg-audio:
   css:
     base:
       css/revealjs.bg-audio.css: {}
+
+wavesurfer.js:
+  remote: https://github.com/katspaugh/wavesurfer.js
+  version: 7.x
+  license:
+    name: BSD-3-Clause license 
+    url: https://github.com/katspaugh/wavesurfer.js?tab=BSD-3-Clause-1-ov-file#readme
+    gpl-compatible: true
+  js:
+    https://unpkg.com/wavesurfer.js@7: {type: external}
+
+audio_guide:
+  js:
+    https://unpkg.com/wavesurfer.js@7.9.1/dist/plugins/regions.min.js: {type: external}
+    https://unpkg.com/wavesurfer.js@7.9.1/dist/plugins/timeline.min.js: {type: external}
+    js/audio_guide.js: {}
+  dependencies:
+    - present_background_audio/wavesurfer.js
+    - core/once

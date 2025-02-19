@@ -1,0 +1,8 @@
+present_background_audio.edit:
+  route_name: entity.presentation.edit_form
+  title: 'Edit'
+  base_route: entity.presentation.edit_form
+entity.presentation.audio_guide:
+  route_name: entity.presentation.audio_guide
+  title: 'Audio Guide'
+  base_route: entity.presentation.edit_form

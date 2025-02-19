@@ -1,0 +1,7 @@
+entity.presentation.audio_guide:
+  path: '/admin/structure/presentation/{presentation}/audio-guide'
+  defaults:
+    _entity_form: 'presentation.audio_guide'
+    _title: 'Presentaiton Audio Guide Studio'
+  requirements:
+    _permission: 'administer presentations'

@@ -1,0 +1,8 @@
+<?php
+
+function present_background_audio_entity_type_alter(array &$entity_types) {
+  // Check if the presentation entity type exists.
+  if (isset($entity_types['presentation'])) {
+    $entity_types['presentation']->setFormClass('audio_guide', 'Drupal\present_background_audio\Form\PresentationAudioGuideForm');
+  }
+}
