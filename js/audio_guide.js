@@ -37,7 +37,16 @@
             }
             let region = regions_plugin.addRegion(region_config);
             region.type = region_config.type;
+            region.fixed_size = region_config.fixed_size;
             regions.push(region);
+          });
+          let previous_region = null;
+          regions.forEach((region, index) => {
+            if (previous_region) {
+              previous_region.next_region = region;
+              region.previous_region = previous_region;
+            }
+            previous_region = region;
           });
         });
 
@@ -45,16 +54,37 @@
 
         regions_plugin.on('region-clicked', (region, e) => {
           e.stopPropagation() // prevent triggering a click on the waveform
-          // activeRegion = region
           region.play(true)
-          // if (region.type !== 'transition') {
-          //   region.setOptions({ color: randomColor() })
-          // }
         })
 
-        // regions_plugin.enableDragSelection({
-        //   color: 'rgba(255, 0, 0, 0.1)',
-        // })
+        function updatePreviousRegion(region) {
+          if (region.previous_region) {
+            region.previous_region.setOptions({end: region.start});
+            if (region.previous_region.fixed_size) {
+              region.previous_region.setOptions({start: region.start - region.previous_region.fixed_size});
+            }
+            updatePreviousRegion(region.previous_region);
+          }
+        }
+
+        function updateNextRegion(region) {
+          if (region.next_region) {
+            region.next_region.setOptions({start: region.end});
+            if (region.next_region.fixed_size) {
+              region.next_region.setOptions({end: region.end + region.next_region.fixed_size});
+            }
+            updateNextRegion(region.next_region);
+          }
+        }
+        regions_plugin.on('region-update', (region, side) => {
+          if (region.previous_region) {
+            updatePreviousRegion(region);
+          }
+          if (region.next_region) {
+            region.next_region.setOptions({start: region.end});
+            updateNextRegion(region);
+          }
+        });
       });
     }
   }
