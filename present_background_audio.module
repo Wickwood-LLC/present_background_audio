@@ -18,7 +18,6 @@ function present_background_audio_theme() {
   ];
 }
 
-function template_preprocess_pba_audio_guide(&$variables) {
-  $audio_guide = $variables['audio_guide'];
-  $variables['audio_track'] = $audio_guide['audio_track'];
-}
+// function template_preprocess_pba_audio_guide(&$variables) {
+//   $audio_guide = $variables['audio_guide'];
+// }
