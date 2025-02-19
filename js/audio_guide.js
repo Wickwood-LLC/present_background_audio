@@ -51,7 +51,6 @@
               region_config.color = randomColor();
             }
             let region = regions_plugin.addRegion(region_config);
-            region.type = region_config.type;
             region.fixed_size = region_config.fixed_size;
             regions.push(region);
           });
@@ -92,6 +91,14 @@
           }
         }
         regions_plugin.on('region-update', (region, side) => {
+          if (region.fixed_size) {
+            if (side === 'start') {
+              region.setOptions({end: region.start + region.fixed_size});
+            }
+            if (side === 'end') {
+              region.setOptions({start: region.end - region.fixed_size});
+            }
+          }
           if (region.previous_region) {
             updatePreviousRegion(region);
           }

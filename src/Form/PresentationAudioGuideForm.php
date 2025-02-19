@@ -109,7 +109,7 @@ class PresentationAudioGuideForm extends EntityForm {
           'start' => $start,
           'end' => $end,
           'content' => 'Transition #' . $slide_number,
-          'drag' => false,
+          'drag' => true,
           'resize' => false,
           'color' => 'rgba(100, 100, 100, 0.5)',
           'type' => 'transition',
