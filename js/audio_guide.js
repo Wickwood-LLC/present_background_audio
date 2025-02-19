@@ -1,6 +1,23 @@
 // import RegionsPlugin from 'https://unpkg.com/wavesurfer.js@7.9.1/dist/plugins/regions.min.js';
 
 (function(Drupal){
+
+  /**
+   * Save updated regions data back to the input field for form submissions.
+   *
+   * @param {*} regions
+   * @param {*} regions_data
+   * @param {*} input_element
+   */
+  function updateInputField(regions, regions_data, input_element) {
+    let regions_data_copy = {...regions_data}
+    regions.forEach((region, index) => {
+      regions_data_copy[index].start = region.start;
+      regions_data_copy[index].end = region.end;
+    });
+    input_element.value = JSON.stringify(regions_data_copy);
+  }
+
   Drupal.behaviors.audio_guide = {
     attach: function(context, settings) {
       once('wavesurfer', '.audio-guide-track').forEach(function (element) {
@@ -100,8 +117,8 @@
         /**
          * Ensure the region not becomming less than minimum width.
          *
-         * @param {*} region 
-         * @param {*} side 
+         * @param {*} region
+         * @param {*} side
          */
         function preventRegionCollapsing(region, side) {
           let limit;
@@ -123,7 +140,7 @@
         /**
          * Ensure the region go beyon bounderies of previous and next regions.
          *
-         * @param {*} region 
+         * @param {*} region
          * @param {*} side
          */
         function preventOverlapping(region, side) {
@@ -198,6 +215,10 @@
             region.next_region.setOptions({start: region.end});
             updateNextRegion(region);
           }
+        });
+
+        regions_plugin.on('region-updated', (region, side) => {
+          updateInputField(regions, region_configs, hidden_input);
         });
       });
     }
