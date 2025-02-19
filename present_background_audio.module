@@ -6,3 +6,19 @@ function present_background_audio_entity_type_alter(array &$entity_types) {
     $entity_types['presentation']->setFormClass('audio_guide', 'Drupal\present_background_audio\Form\PresentationAudioGuideForm');
   }
 }
+
+/**
+ * Implements hook_theme().
+ */
+function present_background_audio_theme() {
+  return [
+    'pba_audio_guide' => [
+      'render element' => 'audio_guide',
+    ],
+  ];
+}
+
+function template_preprocess_pba_audio_guide(&$variables) {
+  $audio_guide = $variables['audio_guide'];
+  $variables['audio_track'] = $audio_guide['audio_track'];
+}
