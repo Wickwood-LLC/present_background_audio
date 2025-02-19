@@ -2,6 +2,7 @@
 
 namespace Drupal\present_background_audio\Element;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Attribute\RenderElement;
 use Drupal\Core\Render\Element\FormElementBase;
 
@@ -17,8 +18,8 @@ class AudioGuide extends FormElementBase {
   public function getInfo() {
     $class = static::class;
     return [
-      '#pre_render' => [
-        [$class, 'preRender'],
+      '#process' => [
+        [$class, 'processAudioGuide'],
       ],
       '#audio_url' => NULL,
       '#configs' => [],
@@ -31,7 +32,23 @@ class AudioGuide extends FormElementBase {
     ];
   }
 
-  public static function preRender($element) {
+  /**
+   * Processes the slide form element.
+   *
+   * @param array $element
+   *   The form element to process.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param array $complete_form
+   *   The complete form structure.
+   *
+   * @return array
+   *   The processed element.
+   *
+   * @throws \InvalidArgumentException
+   *   Thrown when #field_overrides is malformed.
+   */
+  public static function processAudioGuide(array &$element, FormStateInterface $form_state, array &$complete_form) {
     
     $encoded_region_data = json_encode($element['#default_value']);
     $element['audio_track'] = [
