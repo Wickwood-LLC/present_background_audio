@@ -15,11 +15,19 @@
           // Optionally, specify the maximum pixels-per-second factor while zooming
           maxZoom: 500,
         });
+        const hover_plugin = WaveSurfer.Hover.create({
+          lineColor: '#ff0000',
+          lineWidth: 2,
+          labelBackground: '#555',
+          labelColor: '#fff',
+          labelSize: '11px',
+        });
         // Add the plugin to the WaveSurfer instance
         config.plugins = [
           regions_plugin,
           timeline,
           zoom_plugin,
+          hover_plugin,
         ];
         // Create a WaveSurfer instance
         const ws = WaveSurfer.create(config);
