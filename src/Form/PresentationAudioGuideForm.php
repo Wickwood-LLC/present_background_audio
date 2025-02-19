@@ -2,16 +2,11 @@
 
 namespace Drupal\present_background_audio\Form;
 
-use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Form\SubformState;
-use Drupal\present\Element\RevealJSPresentation;
-use Drupal\present\Entity\Presentation;
 use Drupal\present\Plugin\RevealJSPlugin\RevealJSPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Form for adding/editing Presentation entities.
