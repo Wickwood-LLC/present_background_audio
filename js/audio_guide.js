@@ -104,14 +104,15 @@
          */
         function preventRegionCollapsing(region, side) {
           let limit;
+          let current_region_min_width = region.fixed_size ? region.fixed_size : common_region_min_width;
           if (side === 'start') {
-            limit = region.end - common_region_min_width;
+            limit = region.end - current_region_min_width;
             if (region.start > limit) {
               region.setOptions({start: limit});
             }
           }
           else if (side === 'end') {
-            limit = region.start + common_region_min_width;
+            limit = region.start + current_region_min_width;
             if (region.end < limit) {
               region.setOptions({end: limit});
             }
