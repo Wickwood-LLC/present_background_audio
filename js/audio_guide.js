@@ -103,14 +103,17 @@
          * @param {*} side 
          */
         function preventRegionCollapsing(region, side) {
+          let limit;
           if (side === 'start') {
-            if (region.start > region.end - region_min_width) {
-              region.setOptions({start: region.end - region_min_width});
+            limit = region.end - region_min_width;
+            if (region.start > limit) {
+              region.setOptions({start: limit});
             }
           }
           else if (side === 'end') {
-            if (region.end < region.start + region_min_width) {
-              region.setOptions({end: region.start + region_min_width});
+            limit = region.start + region_min_width;
+            if (region.end < limit) {
+              region.setOptions({end: limit});
             }
           }
         }
