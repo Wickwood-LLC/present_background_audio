@@ -4,7 +4,7 @@
   Drupal.behaviors.audio_guide = {
     attach: function(context, settings) {
       once('wavesurfer', '.audio-guide-track').forEach(function (element) {
-        const region_min_width = 0.1;
+        const common_region_min_width = 0.1;
         let config = JSON.parse(element.getAttribute('data-configs'));
         config.container = element;
         // Initialize the Regions plugin
@@ -105,13 +105,13 @@
         function preventRegionCollapsing(region, side) {
           let limit;
           if (side === 'start') {
-            limit = region.end - region_min_width;
+            limit = region.end - common_region_min_width;
             if (region.start > limit) {
               region.setOptions({start: limit});
             }
           }
           else if (side === 'end') {
-            limit = region.start + region_min_width;
+            limit = region.start + common_region_min_width;
             if (region.end < limit) {
               region.setOptions({end: limit});
             }
@@ -127,13 +127,13 @@
         function preventOverlapping(region, side) {
           let limit;
           if (side === 'start' && region.previous_region) {
-            limit = region.previous_region.start + region_min_width;
+            limit = region.previous_region.start + common_region_min_width;
             if (region.start < limit) {
               region.setOptions({start: limit});
             }
           }
           else if (side === 'end' && region.next_region) {
-            limit = region.next_region.end - region_min_width;
+            limit = region.next_region.end - common_region_min_width;
             if (region.end > limit) {
               region.setOptions({end: limit});
             }
@@ -142,14 +142,14 @@
             // Dragging
             if (region.previous_region) {
               // Don't allow this go beyond making the previous region less than minim width.
-              let limit = region.previous_region.start + region_min_width;
+              let limit = region.previous_region.start + common_region_min_width;
               if (region.start < limit) {
                 region.setOptions({start: limit});
               }
             }
             if (region.next_region) {
               // Don't allow this go beyond making the next region less than minim width.
-              limit = region.next_region.end - region_min_width;
+              limit = region.next_region.end - common_region_min_width;
               if (region.end > limit) {
                 region.setOptions({end: limit});
               }
@@ -171,7 +171,7 @@
             if (side === 'start') {
               if (region.next_region) {
                 // Don't allow to crush next region.
-                limit = region.next_region.end - region_min_width - region.fixed_size;
+                limit = region.next_region.end - common_region_min_width - region.fixed_size;
                 if (region.start > limit) {
                   region.setOptions({start: limit});
                 }
@@ -181,7 +181,7 @@
             if (side === 'end') {
               if (region.previous_region) {
                 // Don't allow to crush previous region.
-                limit = region.previous_region.start + region_min_width + region.fixed_size;
+                limit = region.previous_region.start + common_region_min_width + region.fixed_size;
                 if (region.end < limit) {
                   region.setOptions({end: limit});
                 }
