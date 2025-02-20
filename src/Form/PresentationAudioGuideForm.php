@@ -53,7 +53,7 @@ class PresentationAudioGuideForm extends EntityForm {
     /** @var \Drupal\present\Entity\Presentation $presentation */
 
     if ($this->operation == 'audio_guide') {
-      $form['#title'] = $this->t('<em>Presentation Audio Guide Studio for</em> @title', [
+      $form['#title'] = $this->t('<em>Presentation Audio Sync Studio for</em> @title', [
         '@title' => $presentation->label(),
       ]);
     }

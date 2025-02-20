@@ -4,5 +4,5 @@ present_background_audio.edit:
   base_route: entity.presentation.edit_form
 entity.presentation.audio_guide:
   route_name: entity.presentation.audio_guide
-  title: 'Audio Guide'
+  title: 'Audio Sync Studio'
   base_route: entity.presentation.edit_form
