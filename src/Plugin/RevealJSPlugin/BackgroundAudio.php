@@ -17,6 +17,7 @@ class BackgroundAudio extends ConfigurableRevealJSPluginBase {
   public function defaultConfiguration(): array {
     return [
       'audio_source' => NULL,
+      'pause_on_transition' => FALSE,
     ] + parent::defaultConfiguration();
   }
 
@@ -38,6 +39,14 @@ class BackgroundAudio extends ConfigurableRevealJSPluginBase {
       '#description' => $this->t('URL to the audio file to use for bacground playing. You may omit this and set "data-bg-audio-src" attribute of individual audio start buttons.'),
       '#default_value' => $this->configuration['audio_source'],
     ];
+
+    $form['pause_on_transition'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Pause on transition'),
+      '#description' => $this->t('Pause audio when transitioning to the next slide.'),
+      '#default_value' => $this->configuration['pause_on_transition'],
+    ];
+
     return $form;
   }
 
@@ -46,6 +55,7 @@ class BackgroundAudio extends ConfigurableRevealJSPluginBase {
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     $this->configuration['audio_source'] = $form_state->getValue('audio_source');
+    $this->configuration['pause_on_transition'] = $form_state->getValue('pause_on_transition');
   }
 
   /**
@@ -53,5 +63,6 @@ class BackgroundAudio extends ConfigurableRevealJSPluginBase {
    */
   public function alterRevealJSConfig(&$config) {
     $config['background_audio'] = $this->configuration['audio_source'];
+    $config['background_audio_pause_on_transition'] = $this->configuration['pause_on_transition'];
   }
 }
