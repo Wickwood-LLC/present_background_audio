@@ -86,6 +86,7 @@ class AudioTrackRegions extends FormElementBase {
     ];
 
     $element['#element_validate'] = [[static::class, 'validateAudioGuide']];
+    $element['#description'] = t('Scroll mouse to zoom in and out. Click and drag regions. Resize the region by dragging the edges.');
 
     return $element;
   }
