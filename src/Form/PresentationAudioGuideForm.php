@@ -65,7 +65,11 @@ class PresentationAudioGuideForm extends EntityForm {
 
     $slides = $presentation->getSlides();
     $regions = [];
-    $transition_width = 0.8;
+    $transition_widths = [
+      'default' => 0.8,
+      'fast' => 0.4,
+      'slow' => 1.2,
+    ];
 
     $start = 0;
     $slide_number = 1;
@@ -104,6 +108,7 @@ class PresentationAudioGuideForm extends EntityForm {
         ]);
       }
 
+      $transition_width = $transition_widths[$slide['transition']['speed']];
       if ($slide_number != count($slides)) {
         $start = $end;
         $end = $start + $transition_width;
