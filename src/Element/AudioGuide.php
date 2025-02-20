@@ -24,10 +24,12 @@ class AudioGuide extends FormElementBase {
       '#audio_url' => NULL,
       '#configs' => [],
       '#attributes' => [],
-      '#theme' => 'pba_audio_guide',
       '#theme_wrappers' => ['form_element'],
       '#attached' => [
         'library' => ['present_background_audio/audio_guide'],
+      ],
+      '#value_callback' => [
+        [$class, 'valueCallback'],
       ],
     ];
   }
@@ -49,8 +51,9 @@ class AudioGuide extends FormElementBase {
    *   Thrown when #field_overrides is malformed.
    */
   public static function processAudioGuide(array &$element, FormStateInterface $form_state, array &$complete_form) {
-    
-    $encoded_region_data = json_encode($element['#default_value']);
+    $element['#tree'] = TRUE;
+
+    // $encoded_region_data = json_encode($element['#default_value']);
     $element['audio_track'] = [
       '#type' => 'html_tag',
       '#tag' => 'div',
@@ -69,11 +72,35 @@ class AudioGuide extends FormElementBase {
       ],
     ];
 
-    $element['form_field'] = [
+    $element['region_data'] = [
       '#type' => 'hidden',
-      '#value' => $encoded_region_data,
+      '#default_value' => json_encode($element['#default_value']),
     ];
+
+    $element['#element_validate'] = [[static::class, 'validateAudioGuide']];
+
     return $element;
+  }
+
+  /**
+   * Validates the element.
+   */
+  public static function validateAudioGuide(&$element, FormStateInterface $form_state, &$complete_form) {
+    $region_data = $element['#value'];
+    $form_state->setValueForElement($element['region_data'], NULL);
+    $form_state->setValueForElement($element, $region_data);
+
+    return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
+    if (is_array($input) && isset($input['region_data'])) {
+      return json_decode($input['region_data']);
+    }
+    return $element['#default_value'];
   }
 
 }
