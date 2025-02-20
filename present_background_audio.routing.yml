@@ -1,5 +1,5 @@
 entity.presentation.audio_guide:
-  path: '/admin/structure/presentation/{presentation}/audio-sync'
+  path: '/admin/content/presentation/{presentation}/audio-sync'
   defaults:
     _entity_form: 'presentation.audio_guide'
     _title: 'Presentaiton Audio Sync Studio'
