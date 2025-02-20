@@ -9,8 +9,8 @@ use Drupal\Core\Render\Element\FormElementBase;
 /**
  * Provides a render element for an auido guide studio.
  */
-#[RenderElement('pba_audio_guide')]
-class AudioGuide extends FormElementBase {
+#[RenderElement('audio_track_regions')]
+class AudioTrackRegions extends FormElementBase {
 
   /**
    * {@inheritdoc}

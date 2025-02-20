@@ -122,7 +122,7 @@ class PresentationAudioGuideForm extends EntityForm {
     }
     
     $form['audio_guide'] = [
-      '#type' => 'pba_audio_guide',
+      '#type' => 'audio_track_regions',
       '#audio_url' => $background_audio->getConfiguration()['audio_source'],
       '#default_value' => $regions,
     ];
