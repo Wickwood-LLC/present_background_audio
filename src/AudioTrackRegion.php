@@ -38,14 +38,15 @@ class AudioTrackRegion {
   public string $type;
 
   /**
-   * Fixed size of the region in seconds
+   * Fixed size of the region in seconds.
+   * Fixed sized region cannot be resized.
    */
   public float $fixed_size;
 
   /**
    * ID of the region
    */
-  public int $id;
+  public string $id;
 
   /**
    * Minimum length of the region in seconds
@@ -66,5 +67,12 @@ class AudioTrackRegion {
       $instance->$key = $value;
     }
     return $instance;
+  }
+
+  /**
+   * Get the duration of the region in seconds.
+   */
+  public function getDuration(): float {
+    return $this->end - $this->start;
   }
 }
