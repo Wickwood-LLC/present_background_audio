@@ -4,4 +4,4 @@ entity.presentation.audio_guide:
     _entity_form: 'presentation.audio_guide'
     _title: 'Presentaiton Audio Guide Studio'
   requirements:
-    _permission: 'administer presentations'
+    _custom_access: '\Drupal\present_background_audio\PresentationAccessCheck::audioGuideAcess'
