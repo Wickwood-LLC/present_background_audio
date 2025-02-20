@@ -67,7 +67,6 @@ class AudioTrackRegions extends FormElementBase {
       '#type' => 'html_tag',
       '#tag' => 'div',
       '#attributes' => [
-        'data-audio-guide' => 'true',
         'class' => ['audio-guide-track'],
         'data-configs' => json_encode(
           $element['#configs'] + [
