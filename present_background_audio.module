@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Impelements hook_entity_type_alter().
+ */
 function present_background_audio_entity_type_alter(array &$entity_types) {
   // Check if the presentation entity type exists.
   if (isset($entity_types['presentation'])) {
