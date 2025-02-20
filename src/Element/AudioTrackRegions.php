@@ -5,6 +5,9 @@ namespace Drupal\present_background_audio\Element;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Attribute\RenderElement;
 use Drupal\Core\Render\Element\FormElementBase;
+use Drupal\present_background_audio\AudioTrackRegion;
+use Exception;
+use stdClass;
 
 /**
  * Provides a render element for an auido guide studio.
@@ -22,6 +25,7 @@ class AudioTrackRegions extends FormElementBase {
         [$class, 'processAudioGuide'],
       ],
       '#audio_url' => NULL,
+      '#default_value' => NULL, // This should be an array of AudioTrackRegion objects.
       '#configs' => [],
       '#attributes' => [],
       '#theme_wrappers' => ['form_element'],
@@ -54,6 +58,11 @@ class AudioTrackRegions extends FormElementBase {
     $element['#tree'] = TRUE;
 
     // $encoded_region_data = json_encode($element['#default_value']);
+    foreach ($element['#default_value'] as $region) {
+      if (!$region instanceof AudioTrackRegion) {
+        throw new Exception('#default_value must be an array of AudioTrackRegion objects.');
+      }
+    }
     $element['audio_track'] = [
       '#type' => 'html_tag',
       '#tag' => 'div',
@@ -98,7 +107,11 @@ class AudioTrackRegions extends FormElementBase {
    */
   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
     if (is_array($input) && isset($input['region_data'])) {
-      return json_decode($input['region_data']);
+      $data = [];
+      foreach (json_decode($input['region_data']) as $region_data) {
+        $data[] = AudioTrackRegion::create((array) $region_data);
+      }
+      return $data;
     }
     return $element['#default_value'];
   }

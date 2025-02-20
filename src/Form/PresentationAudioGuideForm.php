@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\present\Plugin\RevealJSPlugin\RevealJSPluginManager;
+use Drupal\present_background_audio\AudioTrackRegion;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -70,14 +71,14 @@ class PresentationAudioGuideForm extends EntityForm {
     foreach ($slides as $slide) {
       $slide_duration = !empty($slide['autoslide']) ? intval($slide['autoslide']) / 1000 : 0;
       $end = $start + $slide_duration;
-      $regions[] = [
+      $regions[] = AudioTrackRegion::create([
         'start' => $start,
         'end' => $end,
         'content' => 'Slide #' . $slide_number,
         'drag' => $slide_number === 1 ? false : true,
         'resize' => true,
         'type' => 'slide',
-      ];
+      ]);
 
       $dom = new \DOMDocument();
       $dom->loadHTML($slide['content']);
@@ -90,20 +91,20 @@ class PresentationAudioGuideForm extends EntityForm {
         $fragment_duration = !empty($fragment->getAttribute('data-autoslide')) ? intval($fragment->getAttribute('data-autoslide')) / 1000 : 0;
         $start = $end;
         $end = $start + $fragment_duration;
-        $regions[] = [
+        $regions[] = AudioTrackRegion::create([
           'start' => $start,
           'end' => $end,
           'content' => 'Fragment #' . $fragment_index + 1,
           'drag' => true,
           'resize' => true,
           'type' => 'fragment',
-        ];
+        ]);
       }
 
       if ($slide_number != count($slides)) {
         $start = $end;
         $end = $start + $transition_width;
-        $regions[] = [
+        $regions[] = AudioTrackRegion::create([
           'start' => $start,
           'end' => $end,
           'content' => '⇝ Transition #' . $slide_number,
@@ -114,7 +115,7 @@ class PresentationAudioGuideForm extends EntityForm {
           'fixed_size' => $transition_width,
           'minLength' => $transition_width, // This may not be needed.
           'maxLength' => $transition_width, // This may not be needed.
-        ];
+        ]);
       }
       $start = $end;
       
