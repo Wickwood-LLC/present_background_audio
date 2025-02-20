@@ -68,10 +68,11 @@ class PresentationAudioGuideForm extends EntityForm {
 
     $start = 0;
     $slide_number = 1;
-    foreach ($slides as $slide) {
+    foreach ($slides as $slide_index => $slide) {
       $slide_duration = !empty($slide['autoslide']) ? intval($slide['autoslide']) / 1000 : 0;
       $end = $start + $slide_duration;
       $regions[] = AudioTrackRegion::create([
+        'id' => "slide_" . $slide_index,
         'start' => $start,
         'end' => $end,
         'content' => 'Slide #' . $slide_number,
@@ -92,6 +93,7 @@ class PresentationAudioGuideForm extends EntityForm {
         $start = $end;
         $end = $start + $fragment_duration;
         $regions[] = AudioTrackRegion::create([
+          'id' => "slide_" . $slide_index . "::fragment_" . $fragment_index,
           'start' => $start,
           'end' => $end,
           'content' => 'Fragment #' . $fragment_index + 1,
@@ -105,6 +107,7 @@ class PresentationAudioGuideForm extends EntityForm {
         $start = $end;
         $end = $start + $transition_width;
         $regions[] = AudioTrackRegion::create([
+          'id' => "slide_" . $slide_index . "::transition",
           'start' => $start,
           'end' => $end,
           'content' => '⇝ Transition #' . $slide_number,
