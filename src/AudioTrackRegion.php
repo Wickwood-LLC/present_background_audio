@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\present_background_audio;
 
 class AudioTrackRegion {

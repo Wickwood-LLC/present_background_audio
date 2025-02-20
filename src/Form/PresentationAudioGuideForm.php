@@ -2,6 +2,7 @@
 
 namespace Drupal\present_background_audio\Form;
 
+use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -55,8 +56,8 @@ class PresentationAudioGuideForm extends EntityForm {
       $form['#title'] = $this->t('<em>Presentation Audio Guide Studio for</em> @title', [
         '@title' => $presentation->label(),
       ]);
-    }    
-    
+    }
+
     /** @var \Drupal\present\Plugin\RevealJSPlugin\RevealJSPluginManager */
     $plugin_manager = \Drupal::service('plugin.manager.revealjs_plugins');
     /** @var \Drupal\present\Plugin\RevealJSPlugin\ConfigurableRevealJSPluginBase */
@@ -121,10 +122,10 @@ class PresentationAudioGuideForm extends EntityForm {
         ]);
       }
       $start = $end;
-      
+
       $slide_number++;
     }
-    
+
     $form['audio_guide'] = [
       '#type' => 'audio_track_regions',
       '#audio_url' => $background_audio->getConfiguration()['audio_source'],
@@ -148,14 +149,61 @@ class PresentationAudioGuideForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    $entity = $this->entity;
-    $status = $entity->save();
+    /** @var \Drupal\present\Entity\Presentation $presentation */
+    $presentation = $this->entity;
+    $regions = $form_state->getValue('audio_guide');
+    $uuid_pattern = Uuid::VALID_PATTERN;
+    foreach ($regions as $region) {
+      /** @var \Drupal\present_background_audio\AudioTrackRegion $region*/
+      $match = NULL;
+      preg_match("/slide_(?<slide_index>$uuid_pattern)(\:\:fragment_(?<fragment_index>.+)|\:\:(?<transition>transition))?/", $region->id, $match);
+      $slide_index = $match['slide_index'];
+      $region_fragment_index = $match['fragment_index'] ?? NULL;
+      $transition = $match['transition'] ?? NULL;
+
+      $slide = $presentation->getSlide($slide_index);
+      if ($slide && !$transition) {
+        if (isset($region_fragment_index) && $region_fragment_index !== '') {
+          $dom = new \DOMDocument();
+          $dom->preserveWhiteSpace = TRUE;
+          $dom->formatOutput = TRUE;
+          // @ is to suppress warnings about malformed HTML.
+          @$dom->loadHTML($slide['content']);
+
+          $xpath = new \DOMXPath($dom);
+          // Query elements with the class "fragment"
+          $fragments = $xpath->query('//*[contains(@class, "fragment")]');
+          foreach ($fragments as $fragment_index => $fragment) {
+            /** @var \DOMElement $fragment */
+            if ($fragment_index == $region_fragment_index) {
+              $fragment->setAttribute('data-autoslide', $region->getDuration() * 1000);
+              /** @var \DOMElement $body */
+              $body = $dom->getElementsByTagName('body')->item(0);
+              $children  = $body->childNodes;
+              $innerHTML = '';
+              foreach ($children as $child) {
+                  $innerHTML .= $dom->saveHTML($child);
+              }
+              $slide['content'] = $innerHTML;
+              $presentation->setSlide($slide_index, $slide);
+              break;
+            }
+          }
+        }
+        else {
+          $slide['autoslide'] = $region->getDuration() * 1000;
+          $presentation->setSlide($slide_index, $slide);
+        }
+      }
+    }
+
+    $status = $presentation->save();
 
     $this->messenger()->addMessage($this->t('Updated audio guide settings for %label presentaiton.', [
-      '%label' => $entity->label(),
+      '%label' => $presentation->label(),
     ]));
 
-    $form_state->setRedirectUrl($entity->toUrl('collection'));
+    $form_state->setRedirectUrl($presentation->toUrl('edit-form'));
   }
 
   /**
