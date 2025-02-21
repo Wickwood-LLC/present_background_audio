@@ -1,4 +1,4 @@
-entity.presentation.audio_guide:
+entity.presentation.audio_sync:
   path: '/admin/content/presentation/{presentation}/audio-sync'
   defaults:
     _entity_form: 'presentation.audio_guide'
