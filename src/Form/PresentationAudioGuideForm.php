@@ -204,7 +204,7 @@ class PresentationAudioGuideForm extends EntityForm {
 
     $status = $presentation->save();
 
-    $this->messenger()->addMessage($this->t('Updated audio guide settings for %label presentaiton.', [
+    $this->messenger()->addMessage($this->t('Updated Auto-Slide settings for slides to sync with the audio track for %label presentaiton.', [
       '%label' => $presentation->label(),
     ]));
 
