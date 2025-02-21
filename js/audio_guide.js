@@ -164,7 +164,7 @@
           let lower_limit, upper_limit;
           if (side === 'start') {
             if (region.previous_region) {
-              lower_limit = region.previous_region.start + common_region_min_width;
+              lower_limit = region.previous_region.start + (region.previous_region.fixed_size ? region.previous_region.fixed_size :common_region_min_width);
               if (region.start < lower_limit) {
                 region.setOptions({start: lower_limit});
               }
@@ -172,7 +172,7 @@
           }
           else if (side === 'end') {
             if (region.next_region) {
-              upper_limit = region.next_region.end - common_region_min_width;
+              upper_limit = region.next_region.end - ( region.next_region.fixed_size ? region.next_region.fixed_size : common_region_min_width);
               if (region.end > upper_limit) {
                 region.setOptions({end: upper_limit});
               }
@@ -181,15 +181,15 @@
           else {
             // Dragging
             if (region.previous_region) {
-              // Don't allow this go beyond making the previous region less than minim width.
-              lower_limit = region.previous_region.start + common_region_min_width;
+              // Don't allow this go beyond making the previous region less than minimum width.
+              lower_limit = region.previous_region.start + ( region.previous_region.fixed_size ? region.previous_region.fixed_size : common_region_min_width);
               if (region.start < lower_limit) {
                 region.setOptions({start: lower_limit});
               }
             }
             if (region.next_region) {
-              // Don't allow this go beyond making the next region less than minim width.
-              upper_limit = region.next_region.end - common_region_min_width;
+              // Don't allow this go beyond making the next region less than minimum width.
+              upper_limit = region.next_region.end - ( region.next_region.fixed_size ? region.next_region.fixed_size : common_region_min_width);
               if (region.end > upper_limit) {
                 region.setOptions({end: upper_limit});
               }
