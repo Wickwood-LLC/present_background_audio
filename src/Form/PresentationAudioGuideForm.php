@@ -109,7 +109,7 @@ class PresentationAudioGuideForm extends EntityForm {
       }
 
       $transition_width = $transition_widths[$slide['transition']['speed']];
-      if ($slide_number != count($slides)) {
+      if (!$background_audio->getConfiguration()['pause_during_transition'] && $slide_number != count($slides)) {
         $start = $end;
         $end = $start + $transition_width;
         $regions[] = AudioTrackRegion::create([
