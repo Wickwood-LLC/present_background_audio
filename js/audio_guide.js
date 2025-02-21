@@ -161,20 +161,20 @@
          * @param {*} side
          */
         function preventOverlapping(region, side) {
-          let limit;
+          let lower_limit, upper_limit;
           if (side === 'start') {
             if (region.previous_region) {
-              limit = region.previous_region.start + common_region_min_width;
-              if (region.start < limit) {
-                region.setOptions({start: limit});
+              lower_limit = region.previous_region.start + common_region_min_width;
+              if (region.start < lower_limit) {
+                region.setOptions({start: lower_limit});
               }
             }
           }
           else if (side === 'end') {
             if (region.next_region) {
-              limit = region.next_region.end - common_region_min_width;
-              if (region.end > limit) {
-                region.setOptions({end: limit});
+              upper_limit = region.next_region.end - common_region_min_width;
+              if (region.end > upper_limit) {
+                region.setOptions({end: upper_limit});
               }
             }
           }
@@ -182,16 +182,16 @@
             // Dragging
             if (region.previous_region) {
               // Don't allow this go beyond making the previous region less than minim width.
-              let limit = region.previous_region.start + common_region_min_width;
-              if (region.start < limit) {
-                region.setOptions({start: limit});
+              lower_limit = region.previous_region.start + common_region_min_width;
+              if (region.start < lower_limit) {
+                region.setOptions({start: lower_limit});
               }
             }
             if (region.next_region) {
               // Don't allow this go beyond making the next region less than minim width.
-              limit = region.next_region.end - common_region_min_width;
-              if (region.end > limit) {
-                region.setOptions({end: limit});
+              upper_limit = region.next_region.end - common_region_min_width;
+              if (region.end > upper_limit) {
+                region.setOptions({end: upper_limit});
               }
             }
           }
