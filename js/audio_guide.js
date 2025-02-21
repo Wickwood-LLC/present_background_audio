@@ -162,16 +162,20 @@
          */
         function preventOverlapping(region, side) {
           let limit;
-          if (side === 'start' && region.previous_region) {
-            limit = region.previous_region.start + common_region_min_width;
-            if (region.start < limit) {
-              region.setOptions({start: limit});
+          if (side === 'start') {
+            if (region.previous_region) {
+              limit = region.previous_region.start + common_region_min_width;
+              if (region.start < limit) {
+                region.setOptions({start: limit});
+              }
             }
           }
-          else if (side === 'end' && region.next_region) {
-            limit = region.next_region.end - common_region_min_width;
-            if (region.end > limit) {
-              region.setOptions({end: limit});
+          else if (side === 'end') {
+            if (region.next_region) {
+              limit = region.next_region.end - common_region_min_width;
+              if (region.end > limit) {
+                region.setOptions({end: limit});
+              }
             }
           }
           else {
