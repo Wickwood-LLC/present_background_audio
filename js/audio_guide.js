@@ -49,6 +49,13 @@
           labelBackground: '#555',
           labelColor: '#fff',
           labelSize: '11px',
+          formatTimeCallback(seconds) {
+            const minutes = Math.floor(seconds / 60)
+            const secondsRemainder = Math.floor(seconds) % 60
+            const paddedSeconds = `0${secondsRemainder}`.slice(-2)
+            const milli_seonds = seconds % 1
+            return `${minutes}:${paddedSeconds}.${milli_seonds.toFixed(3).slice(2)}`
+          },
         });
         // Add the plugin to the WaveSurfer instance
         config.plugins = [
