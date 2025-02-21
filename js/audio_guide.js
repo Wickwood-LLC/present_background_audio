@@ -1,5 +1,3 @@
-// import RegionsPlugin from 'https://unpkg.com/wavesurfer.js@7.9.1/dist/plugins/regions.min.js';
-
 (function(Drupal){
 
   /**
