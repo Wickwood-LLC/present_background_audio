@@ -8,7 +8,7 @@
    * @param {*} input_element
    */
   function updateInputField(regions, regions_data, input_element) {
-    let regions_data_copy = {...regions_data}
+    let regions_data_copy = regions_data.slice();``
     regions.forEach((region, index) => {
       regions_data_copy[index].start = region.start;
       regions_data_copy[index].end = region.end;
