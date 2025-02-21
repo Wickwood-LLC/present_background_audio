@@ -169,12 +169,27 @@
                 region.setOptions({start: lower_limit});
               }
             }
+            if (region.next_region) {
+              upper_limit = region.next_region.end - (region.next_region.fixed_size ? region.next_region.fixed_size : common_region_min_width);
+              upper_limit -= region.fixed_size ? region.fixed_size : common_region_min_width;
+              if (region.start > upper_limit) {
+                region.setOptions({start: upper_limit});
+              }
+            }
           }
           else if (side === 'end') {
             if (region.next_region) {
               upper_limit = region.next_region.end - ( region.next_region.fixed_size ? region.next_region.fixed_size : common_region_min_width);
               if (region.end > upper_limit) {
                 region.setOptions({end: upper_limit});
+              }
+            }
+            if (region.previous_region) {
+              lower_limit = region.previous_region.start;
+              lower_limit += region.previous_region.fixed_size ? region.previous_region.fixed_size : common_region_min_width;
+              lower_limit += region.fixed_size ? region.fixed_size : common_region_min_width;
+              if (region.end < lower_limit) {
+                region.setOptions({end: lower_limit});
               }
             }
           }
@@ -205,31 +220,17 @@
           preventRegionCollapsing(region, side);
           // Then ensure it does not go beyond previous and next regions.
           preventOverlapping(region, side);
-          let limit;
           if (region.fixed_size) {
             // This is fixed sized region like transitions.
             if (side === 'start') {
-              if (region.next_region) {
-                // Don't allow to crush next region.
-                limit = region.next_region.end - common_region_min_width - region.fixed_size;
-                if (region.start > limit) {
-                  region.setOptions({start: limit});
-                }
-              }
               region.setOptions({end: region.start + region.fixed_size});
             }
             if (side === 'end') {
-              if (region.previous_region) {
-                // Don't allow to crush previous region.
-                limit = region.previous_region.start + common_region_min_width + region.fixed_size;
-                if (region.end < limit) {
-                  region.setOptions({end: limit});
-                }
-              }
               region.setOptions({start: region.end - region.fixed_size});
             }
           }
           if (region.previous_region) {
+            region.previous_region.setOptions({end: region.start});
             updatePreviousRegion(region);
           }
           if (region.next_region) {
