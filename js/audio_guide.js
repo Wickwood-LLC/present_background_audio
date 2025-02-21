@@ -21,7 +21,18 @@
   Drupal.behaviors.audio_guide = {
     attach: function(context, settings) {
       once('wavesurfer', '.audio-guide-track').forEach(function (element) {
-        const hidden_input = element.nextElementSibling
+        const wrapper = element.parentElement;
+
+        // Get the default play mode.
+        let play_mode = wrapper.querySelector('input[name="audio_guide[play_mode]"]:checked').value;
+        const play_mode_radios = wrapper.querySelectorAll('input[name="audio_guide[play_mode]"]');
+        play_mode_radios.forEach(radio => {
+          radio.addEventListener('click', () => {
+            // Set as the active play mode.
+            play_mode = radio.value;
+          });
+        });
+
         const common_region_min_width = 0.1;
         let config = JSON.parse(element.getAttribute('data-configs'));
         config.container = element;
@@ -61,6 +72,7 @@
         const randomColor = () => `rgba(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)}, 0.5)`
 
 
+        const hidden_input = wrapper.querySelector('input[type="hidden"]');
         let region_configs = JSON.parse(hidden_input.value);
         // Create a region
         let regions = [];
@@ -86,8 +98,10 @@
         ws.on('error', e => alert(e))
 
         regions_plugin.on('region-clicked', (region, e) => {
-          e.stopPropagation() // prevent triggering a click on the waveform
-          region.play(true)
+          if (play_mode === 'region') {
+            e.stopPropagation() // prevent triggering a click on the waveform
+            region.play(true)
+          }
         })
 
         function updatePreviousRegion(region) {

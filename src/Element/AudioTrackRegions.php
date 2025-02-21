@@ -7,7 +7,6 @@ use Drupal\Core\Render\Attribute\RenderElement;
 use Drupal\Core\Render\Element\FormElementBase;
 use Drupal\present_background_audio\AudioTrackRegion;
 use Exception;
-use stdClass;
 
 /**
  * Provides a render element for an auido guide studio.
@@ -63,6 +62,17 @@ class AudioTrackRegions extends FormElementBase {
         throw new Exception('#default_value must be an array of AudioTrackRegion objects.');
       }
     }
+
+    $element['play_mode'] = [
+      '#type' => 'radios',
+      '#title' => t('Play mode'),
+      '#options' => [
+        'full' => t('Play rest of the audio track from where clicked'),
+        'region' => t('Play only the clicked region'),
+      ],
+      '#default_value' => $element['#play_mode'] ?? 'full',
+    ];
+
     $element['audio_track'] = [
       '#type' => 'html_tag',
       '#tag' => 'div',
