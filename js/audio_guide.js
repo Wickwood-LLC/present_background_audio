@@ -73,11 +73,13 @@
 
 
         const hidden_input = wrapper.querySelector('input[type="hidden"]');
+        // Get the region configs from the hidden input.
         let region_configs = JSON.parse(hidden_input.value);
-        // Create a region
+        // List to keep regions in order.
         let regions = [];
         ws.on('decode', function (duration) {
           region_configs.forEach((region_config) => {
+            // Set a random color if none is set.
             if (!('color' in region_config)) {
               region_config.color = randomColor();
             }
@@ -85,6 +87,9 @@
             region.fixed_size = region_config.fixed_size;
             regions.push(region);
           });
+
+          // Link regions to each other.
+          // So that we can identify the previous and next regions easily.
           let previous_region = null;
           regions.forEach((region, index) => {
             if (previous_region) {
