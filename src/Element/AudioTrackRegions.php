@@ -56,8 +56,8 @@ class AudioTrackRegions extends FormElementBase {
   public static function processAudioGuide(array &$element, FormStateInterface $form_state, array &$complete_form) {
     $element['#tree'] = TRUE;
 
-    // $encoded_region_data = json_encode($element['#default_value']);
-    foreach ($element['#default_value'] as $region) {
+    $value = $element['#value'];
+    foreach ($value as $region) {
       if (!$region instanceof AudioTrackRegion) {
         throw new Exception('#default_value must be an array of AudioTrackRegion objects.');
       }
@@ -92,7 +92,7 @@ class AudioTrackRegions extends FormElementBase {
 
     $element['region_data'] = [
       '#type' => 'hidden',
-      '#default_value' => json_encode($element['#default_value']),
+      '#default_value' => json_encode($value),
     ];
 
     $element['#element_validate'] = [[static::class, 'validateAudioGuide']];
@@ -105,9 +105,25 @@ class AudioTrackRegions extends FormElementBase {
    * Validates the element.
    */
   public static function validateAudioGuide(&$element, FormStateInterface $form_state, &$complete_form) {
-    $region_data = $element['#value'];
+    $regions_data = $element['#value'];
     $form_state->setValueForElement($element['region_data'], NULL);
-    $form_state->setValueForElement($element, $region_data);
+    $form_state->setValueForElement($element, $regions_data);
+
+    $previous_region = NULL;
+    foreach ($regions_data as $region_data) {
+      /** @var \Drupal\present_background_audio\AudioTrackRegion $region_data */
+      if ($previous_region && $previous_region->end != $region_data->start) {
+        /** @var \Drupal\present_background_audio\AudioTrackRegion $previous_region */
+        $form_state->setError(
+          $element['audio_track'],
+          t('Regions must not have gaps or overlaps. End of "@previous" region does not match start of "@current" region.', [
+            '@previous' => $previous_region->content,
+            '@current' => $region_data->content,
+          ])
+        );
+      }
+      $previous_region = $region_data;
+    }
 
     return $element;
   }
