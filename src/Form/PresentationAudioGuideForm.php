@@ -174,6 +174,17 @@ class PresentationAudioGuideForm extends EntityForm {
         '#default_value' => $audio_regions,
       ];
     }
+    if ($form_state->get('preview')) {
+      $form['preview'] = [
+        '#type' => 'details',
+        '#title' => $this->t('Preview'),
+        '#open' => TRUE,
+      ];
+      $form['preview']['presentation'] = [
+        '#type' => 'revealjs_presentation',
+        '#presentation' => $presentation,
+      ];
+    }
     
     return $form;
   }
@@ -195,6 +206,25 @@ class PresentationAudioGuideForm extends EntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     $button = $form_state->getTriggeringElement();
 
+    $this->applyChangesToPresentation($form, $form_state);
+    /** @var \Drupal\present\Entity\Presentation $presentation */
+    $presentation = $this->entity;
+
+    $status = $presentation->save();
+
+    $this->messenger()->addMessage($this->t('Updated Auto-Slide settings for slides to sync with the audio track for %label presentaiton.', [
+      '%label' => $presentation->label(),
+    ]));
+
+    if ($button['#value'] == $this->t('Save')) {
+      $form_state->setRedirectUrl($presentation->toUrl('edit-form'));
+    }
+  }
+
+  /**
+   * Method to apply sync times to presentation.
+   */
+  protected function applyChangesToPresentation(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\present\Entity\Presentation $presentation */
     $presentation = $this->entity;
     $audio_guides = $form_state->getValue('audio_guides');
@@ -245,16 +275,19 @@ class PresentationAudioGuideForm extends EntityForm {
         }
       }
     }
+  }
 
-    $status = $presentation->save();
+  /**
+   * {@inheritdoc}
+   */
+  public function preview(array $form, FormStateInterface $form_state) {
+    $this->applyChangesToPresentation($form, $form_state);
+    /** @var \Drupal\present\Entity\Presentation $presentation */
+    $presentation = $this->entity;
 
-    $this->messenger()->addMessage($this->t('Updated Auto-Slide settings for slides to sync with the audio track for %label presentaiton.', [
-      '%label' => $presentation->label(),
-    ]));
-
-    if ($button['#value'] == $this->t('Save')) {
-      $form_state->setRedirectUrl($presentation->toUrl('edit-form'));
-    }
+    $form_state->set('presentation', $presentation);
+    $form_state->set('preview', TRUE);
+    $form_state->setRebuild();
   }
 
   /**
@@ -271,6 +304,12 @@ class PresentationAudioGuideForm extends EntityForm {
     $actions = parent::actions($form, $form_state);
     $actions['save_continue'] = $actions['submit'];
     $actions['save_continue']['#value'] = $this->t('Save and Continue');
+
+    $actions['preview'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Preview'),
+      '#submit' => ['::submitForm', '::preview'],
+    ];
     return $actions;
   }
 
