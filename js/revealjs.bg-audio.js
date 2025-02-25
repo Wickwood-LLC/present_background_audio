@@ -23,6 +23,9 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
         start_buttons.forEach(child => {
             child.classList.add('background-audio-start-button');
             child.addEventListener('click', function (event){
+                // Prevent the default action of the button so, it wont cuase problmes
+                // in the preview mdde where presentation will be embedded within a form.
+                event.preventDefault();
                 plugin.startAudio(this);
             });
         });
