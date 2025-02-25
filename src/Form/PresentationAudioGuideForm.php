@@ -168,7 +168,7 @@ class PresentationAudioGuideForm extends EntityForm {
         }
         $audio_regions[] = $region;
       }
-      $form['audio_guides'][$start_button['slide_index']] = [
+      $form['audio_guides'][$start_button['slide_index']]['audio_guide'] = [
         '#type' => 'audio_track_regions',
         '#audio_url' => !empty($start_button['audio']) ? $start_button['audio'] : $background_audio->getConfiguration()['audio_source'],
         '#default_value' => $audio_regions,
@@ -199,7 +199,8 @@ class PresentationAudioGuideForm extends EntityForm {
     $presentation = $this->entity;
     $audio_guides = $form_state->getValue('audio_guides');
     $uuid_pattern = Uuid::VALID_PATTERN;
-    foreach ($audio_guides as $slide_index => $regions) {
+    foreach ($audio_guides as $slide_index => $audio_guide) {
+      $regions = $audio_guide['audio_guide'];
       foreach ($regions as $region) {
         /** @var \Drupal\present_background_audio\AudioTrackRegion $region*/
         $match = NULL;
