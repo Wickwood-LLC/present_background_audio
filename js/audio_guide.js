@@ -104,6 +104,9 @@
 
         regions_plugin.on('region-clicked', (region, e) => {
           active_region = region;
+          if (ws.isPlaying()) {
+            ws.pause();
+          }
         })
         regions_plugin.on('region-in', (region, e) => {
           active_region = region;
