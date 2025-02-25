@@ -63,16 +63,6 @@ class AudioTrackRegions extends FormElementBase {
       }
     }
 
-    $element['play_mode'] = [
-      '#type' => 'radios',
-      '#title' => t('Play mode'),
-      '#options' => [
-        'full' => t('Play rest of the audio track from where clicked'),
-        'region' => t('Play only the clicked region'),
-      ],
-      '#default_value' => $element['#play_mode'] ?? 'full',
-    ];
-
     $element['audio_track'] = [
       '#type' => 'html_tag',
       '#tag' => 'div',
@@ -93,6 +83,39 @@ class AudioTrackRegions extends FormElementBase {
     $element['region_data'] = [
       '#type' => 'hidden',
       '#default_value' => json_encode($value),
+    ];
+
+    $element['controls'] = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['audio-controls'],
+      ],
+    ];
+
+    $element['controls']['play_from_start'] = [
+      '#type' => 'button',
+      '#value' => t('⏮'),
+      '#attributes' => [
+        'class' => ['audio-play-from-start'],
+        'title' => t('Play from start'),
+      ],
+    ];
+    $element['controls']['play'] = [
+      '#type' => 'button',
+      '#value' => t('⏯'),
+      '#attributes' => [
+        'class' => ['audio-play'],
+        'title' => t('Play/Pause'),
+      ],
+    ];
+
+    $element['controls']['play_step_back'] = [
+      '#type' => 'button',
+      '#value' => t('Play start of   current region'),
+      '#attributes' => [
+        'class' => ['audio-play-step-back'],
+        'title' => t('Play step back'),
+      ],
     ];
 
     $element['#element_validate'] = [[static::class, 'validateAudioGuide']];

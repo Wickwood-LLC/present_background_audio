@@ -21,16 +21,6 @@
       once('wavesurfer', '.audio-guide-track').forEach(function (element) {
         const wrapper = element.parentElement;
 
-        // Get the default play mode.
-        let play_mode = wrapper.querySelector('input[name="audio_guide[play_mode]"]:checked').value;
-        const play_mode_radios = wrapper.querySelectorAll('input[name="audio_guide[play_mode]"]');
-        play_mode_radios.forEach(radio => {
-          radio.addEventListener('click', () => {
-            // Set as the active play mode.
-            play_mode = radio.value;
-          });
-        });
-
         const common_region_min_width = 0.1;
         let config = JSON.parse(element.getAttribute('data-configs'));
         config.container = element;
@@ -66,10 +56,11 @@
         ];
         // Create a WaveSurfer instance
         const ws = WaveSurfer.create(config);
+        let active_region = null;
 
         // Play on click
         ws.on('interaction', () => {
-          ws.play()
+          // ws.play()
         });
 
         // Give regions a random color when they are created
@@ -103,16 +94,20 @@
             }
             previous_region = region;
           });
+          // Set the first region as active by default.
+          if (regions.length > 0) {
+            active_region = regions[0];
+          }
         });
 
         ws.on('error', e => alert(e))
 
         regions_plugin.on('region-clicked', (region, e) => {
-          if (play_mode === 'region') {
-            e.stopPropagation() // prevent triggering a click on the waveform
-            region.play(true)
-          }
+          active_region = region;
         })
+        regions_plugin.on('region-in', (region, e) => {
+          active_region = region;
+        });
 
         function updatePreviousRegion(region) {
           if (region.previous_region) {
@@ -255,6 +250,42 @@
         regions_plugin.on('region-updated', (region, side) => {
           updateInputField(regions, region_configs, hidden_input);
         });
+        let play_button = wrapper.querySelector('.audio-controls .audio-play');
+        play_button.addEventListener('click', (event) => {
+          event.preventDefault();
+          ws.playPause();
+        });
+
+        let play_from_start_button = wrapper.querySelector('.audio-controls .audio-play-from-start');
+        play_from_start_button.addEventListener('click', (event) => {
+          event.preventDefault();
+          ws.setTime(0);
+          ws.play();
+        });
+
+        let play_step_back = wrapper.querySelector('.audio-controls .audio-play-step-back');
+        play_step_back.addEventListener('click', (event) => {
+          event.preventDefault();
+          if (active_region) {
+            ws.setTime(active_region.start);
+            ws.play();
+          }
+        });
+
+        /** When the audio starts playing */
+        ws.on('play', () => {
+          play_button.classList.add('playing');
+        })
+
+        /** When the audio pauses */
+        ws.on('pause', () => {
+          play_button.classList.remove('playing');
+        })
+
+        /** When the audio finishes playing */
+        ws.on('finish', () => {
+          play_button.classList.remove('playing');
+        })
       });
     }
   }

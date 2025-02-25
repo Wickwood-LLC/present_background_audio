@@ -16,6 +16,9 @@ wavesurfer.js:
     https://unpkg.com/wavesurfer.js@7: {type: external}
 
 audio_guide:
+  css:
+    base:
+      css/audio-guide.css: {}
   js:
     https://unpkg.com/wavesurfer.js@7.9.1/dist/plugins/regions.min.js: {type: external}
     https://unpkg.com/wavesurfer.js@7.9.1/dist/plugins/timeline.min.js: {type: external}
