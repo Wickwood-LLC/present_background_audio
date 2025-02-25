@@ -154,6 +154,8 @@ class PresentationAudioGuideForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
+    $button = $form_state->getTriggeringElement();
+
     /** @var \Drupal\present\Entity\Presentation $presentation */
     $presentation = $this->entity;
     $regions = $form_state->getValue('audio_guide');
@@ -208,7 +210,9 @@ class PresentationAudioGuideForm extends EntityForm {
       '%label' => $presentation->label(),
     ]));
 
-    $form_state->setRedirectUrl($presentation->toUrl('edit-form'));
+    if ($button['#value'] == $this->t('Save')) {
+      $form_state->setRedirectUrl($presentation->toUrl('edit-form'));
+    }
   }
 
   /**
@@ -219,6 +223,13 @@ class PresentationAudioGuideForm extends EntityForm {
     // Don't allow the user to delete the entity with this form.
     unset($element['delete']);
     return $element;
+  }
+
+  protected function actions(array $form, FormStateInterface $form_state) {
+    $actions = parent::actions($form, $form_state);
+    $actions['save_continue'] = $actions['submit'];
+    $actions['save_continue']['#value'] = $this->t('Save and Continue');
+    return $actions;
   }
 
 }
