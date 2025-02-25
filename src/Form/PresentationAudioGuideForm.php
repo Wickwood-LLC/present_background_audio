@@ -71,6 +71,8 @@ class PresentationAudioGuideForm extends EntityForm {
       'slow' => 1.2,
     ];
 
+    $start_buttons = [];
+
     $start = 0;
     $slide_number = 1;
     foreach ($slides as $slide_index => $slide) {
@@ -108,6 +110,20 @@ class PresentationAudioGuideForm extends EntityForm {
         ]);
       }
 
+      $buttons_xpath = new \DOMXPath($dom);
+      // Query elements for start buttons.
+      $start_buttons_elements = $buttons_xpath->query('//*[@data-bg-audio-start-button]');
+      foreach ($start_buttons_elements as $button_index => $start_buttons_element) {
+        /** @var \DOMElement $start_buttons_element */
+        $start_buttons[$slide_index] = [
+          'slide_index' => $slide_index,
+          'button_index' => $button_index,
+          // Get button specific audio if set.
+          'audio' => $start_buttons_element->getAttribute('data-bg-audio-src'),
+          'label' => $start_buttons_element->textContent,
+        ];
+      }
+
       $transition_width = $transition_widths[$slide['transition']['speed']];
       if (!$background_audio->getConfiguration()['pause_during_transition'] && $slide_number != count($slides)) {
         $start = $end;
@@ -131,11 +147,34 @@ class PresentationAudioGuideForm extends EntityForm {
       $slide_number++;
     }
 
-    $form['audio_guide'] = [
-      '#type' => 'audio_track_regions',
-      '#audio_url' => $background_audio->getConfiguration()['audio_source'],
-      '#default_value' => $regions,
+    $form['audio_guides'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Audio guides'),
+      '#open' => TRUE,
+      '#tree' => TRUE,
     ];
+    foreach ($start_buttons as $start_button) {
+      $audio_regions = [];
+
+      $started = false;
+      foreach ($regions as $region) {
+        if (!$started) {
+          if ($region->id === 'slide_' . $start_button['slide_index']) {
+            $started = true;
+          }
+          else {
+            continue;
+          }
+        }
+        $audio_regions[] = $region;
+      }
+      $form['audio_guides'][$start_button['slide_index']] = [
+        '#type' => 'audio_track_regions',
+        '#audio_url' => !empty($start_button['audio']) ? $start_button['audio'] : $background_audio->getConfiguration()['audio_source'],
+        '#default_value' => $audio_regions,
+      ];
+    }
+    
     return $form;
   }
 
@@ -158,48 +197,50 @@ class PresentationAudioGuideForm extends EntityForm {
 
     /** @var \Drupal\present\Entity\Presentation $presentation */
     $presentation = $this->entity;
-    $regions = $form_state->getValue('audio_guide');
+    $audio_guides = $form_state->getValue('audio_guides');
     $uuid_pattern = Uuid::VALID_PATTERN;
-    foreach ($regions as $region) {
-      /** @var \Drupal\present_background_audio\AudioTrackRegion $region*/
-      $match = NULL;
-      preg_match("/slide_(?<slide_index>$uuid_pattern)(\:\:fragment_(?<fragment_index>.+)|\:\:(?<transition>transition))?/", $region->id, $match);
-      $slide_index = $match['slide_index'];
-      $region_fragment_index = $match['fragment_index'] ?? NULL;
-      $transition = $match['transition'] ?? NULL;
-
-      $slide = $presentation->getSlide($slide_index);
-      if ($slide && !$transition) {
-        if (isset($region_fragment_index) && $region_fragment_index !== '') {
-          $dom = new \DOMDocument();
-          $dom->preserveWhiteSpace = TRUE;
-          $dom->formatOutput = TRUE;
-          // @ is to suppress warnings about malformed HTML.
-          @$dom->loadHTML($slide['content']);
-
-          $xpath = new \DOMXPath($dom);
-          // Query elements with the class "fragment"
-          $fragments = $xpath->query('//*[contains(@class, "fragment")]');
-          foreach ($fragments as $fragment_index => $fragment) {
-            /** @var \DOMElement $fragment */
-            if ($fragment_index == $region_fragment_index) {
-              $fragment->setAttribute('data-autoslide', $region->getDuration() * 1000);
-              /** @var \DOMElement $body */
-              $body = $dom->getElementsByTagName('body')->item(0);
-              $children  = $body->childNodes;
-              $innerHTML = '';
-              foreach ($children as $child) {
-                  $innerHTML .= $dom->saveHTML($child);
+    foreach ($audio_guides as $slide_index => $regions) {
+      foreach ($regions as $region) {
+        /** @var \Drupal\present_background_audio\AudioTrackRegion $region*/
+        $match = NULL;
+        preg_match("/slide_(?<slide_index>$uuid_pattern)(\:\:fragment_(?<fragment_index>.+)|\:\:(?<transition>transition))?/", $region->id, $match);
+        $slide_index = $match['slide_index'];
+        $region_fragment_index = $match['fragment_index'] ?? NULL;
+        $transition = $match['transition'] ?? NULL;
+  
+        $slide = $presentation->getSlide($slide_index);
+        if ($slide && !$transition) {
+          if (isset($region_fragment_index) && $region_fragment_index !== '') {
+            $dom = new \DOMDocument();
+            $dom->preserveWhiteSpace = TRUE;
+            $dom->formatOutput = TRUE;
+            // @ is to suppress warnings about malformed HTML.
+            @$dom->loadHTML($slide['content']);
+  
+            $xpath = new \DOMXPath($dom);
+            // Query elements with the class "fragment"
+            $fragments = $xpath->query('//*[contains(@class, "fragment")]');
+            foreach ($fragments as $fragment_index => $fragment) {
+              /** @var \DOMElement $fragment */
+              if ($fragment_index == $region_fragment_index) {
+                $fragment->setAttribute('data-autoslide', $region->getDuration() * 1000);
+                /** @var \DOMElement $body */
+                $body = $dom->getElementsByTagName('body')->item(0);
+                $children  = $body->childNodes;
+                $innerHTML = '';
+                foreach ($children as $child) {
+                    $innerHTML .= $dom->saveHTML($child);
+                }
+                $slide['content'] = $innerHTML;
+                $presentation->setSlide($slide_index, $slide);
+                break;
               }
-              $slide['content'] = $innerHTML;
-              $presentation->setSlide($slide_index, $slide);
-              break;
             }
           }
-        }
-        else {
-          $slide['autoslide'] = $region->getDuration() * 1000;
-          $presentation->setSlide($slide_index, $slide);
+          else {
+            $slide['autoslide'] = $region->getDuration() * 1000;
+            $presentation->setSlide($slide_index, $slide);
+          }
         }
       }
     }
