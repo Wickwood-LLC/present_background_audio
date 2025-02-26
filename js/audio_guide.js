@@ -74,6 +74,7 @@
         // List to keep regions in order.
         let regions = [];
         ws.on('decode', function (duration) {
+          element.wavesurfer = ws;
           region_configs.forEach((region_config) => {
             // Set a random color if none is set.
             if (!('color' in region_config)) {

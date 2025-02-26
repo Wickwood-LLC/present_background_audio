@@ -3,11 +3,13 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
     playing: false,
     backup_config: {},
     deck: null,
+    // If not null, it will either an Audio element or WaveSurfer instance.
     current_audio: null,
     configs_to_control: {autoSlide: 1, controls: false, keyboard: false},
     // If true, the audio will be paused during the transition between slides
     pause_during_transition: false,
     audio_source : null,
+    audio_guide_id: null,
     init: function(deck) {
         this.deck = deck;
         let reveal_element = deck.getRevealElement();
@@ -16,6 +18,9 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
         if ('background_audio' in config) {
             plugin.pause_during_transition = config.background_audio.pause_during_transition;
             plugin.audio_source = config.background_audio.source;
+            if (config.background_audio.audio_guide_id) {
+                plugin.audio_guide_id = config.background_audio.audio_guide_id;
+            }
         }
 
         // Get all start buttons
@@ -76,13 +81,28 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
         const plugin = this;
         let config = plugin.deck.getConfig();
         let audio_source;
+        let audio_guide
+        if (plugin.audio_guide_id) {
+            audio_guide = document.getElementById(plugin.audio_guide_id);
+        }
         if (button.hasAttribute('data-bg-audio-src')) {
             audio_source = button.getAttribute('data-bg-audio-src');
         }
         else {
             audio_source = config.background_audio.source
         }
-        if (audio_source) {
+        if (audio_guide && audio_guide.wavesurfer) {
+            // We can only play presentation in normal speed thus audio also needs to be played in normal speed.
+            audio_guide.wavesurfer.setPlaybackRate(1);
+
+            audio_guide.wavesurfer.play();
+            plugin.controlConfigs();
+            plugin.current_audio = audio_guide.wavesurfer;
+            audio_guide.wavesurfer.on('finish', function () {
+                plugin.stopAudio();
+            });
+        }
+        else if (audio_source) {
             let audio = new Audio(audio_source);
             if (audio) {
                 audio.addEventListener("loadeddata", (event) => {
