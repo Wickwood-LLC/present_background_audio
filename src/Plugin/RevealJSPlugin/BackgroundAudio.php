@@ -70,5 +70,7 @@ class BackgroundAudio extends ConfigurableRevealJSPluginBase {
       'pause_during_transition' => $this->configuration['pause_during_transition'],
       'audio_guide_id' => $this->configuration['audio_guide_id'],
     ];
+    // Presentations with background audio should not scroll.
+    $config['scrollActivationWidth'] = null;
   }
 }
