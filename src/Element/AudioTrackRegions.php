@@ -77,6 +77,8 @@ class AudioTrackRegions extends FormElementBase {
             'waveColor' => 'rgb(200, 0, 200)',
             'progressColor' => 'rgb(100, 0, 100)',
             'minPxPerSec' => 100,
+            'cursorColor' => '#ff0000',
+            'cursorWidth' => 2,
           ] + [
             'url' => $element['#audio_url'],
           ]
