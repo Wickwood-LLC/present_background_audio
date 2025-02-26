@@ -80,6 +80,9 @@
             if (!('color' in region_config)) {
               region_config.color = randomColor();
             }
+            let label = document.createElement('strong');
+            label.innerHTML = region_config.content;
+            region_config.content = label;
             let region = regions_plugin.addRegion(region_config);
             region.fixed_size = region_config.fixed_size;
             regions.push(region);
