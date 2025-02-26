@@ -73,7 +73,7 @@ class PresentationAudioGuideForm extends EntityForm {
     $background_audio->setConfiguration(['audio_guide_id' => $audio_guide_element_id]);
 
     $slides = $presentation->getSlides();
-    $regions = [];
+
     $transition_widths = [
       'default' => 0.8,
       'fast' => 0.4,
@@ -163,8 +163,6 @@ class PresentationAudioGuideForm extends EntityForm {
           ]);
         }
         $start = $end;
-
-        // $slide_number++;
       }
     }
 
