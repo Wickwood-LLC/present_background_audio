@@ -98,7 +98,6 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
             audio_guide.wavesurfer.setPlaybackRate(playback_rate);
             audio_guide.dispatchEvent(playback_rate_event);
 
-            audio_guide.emit
             // Start from beginning.
             audio_guide.wavesurfer.setTime(0);
 
