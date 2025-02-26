@@ -311,7 +311,7 @@ class PresentationAudioGuideForm extends EntityForm {
 
     $actions['preview'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Preview'),
+      '#value' => $this->t('Update Preview'),
       '#submit' => ['::submitForm', '::preview'],
     ];
     return $actions;
