@@ -36,8 +36,9 @@ class BackgroundAudio extends ConfigurableRevealJSPluginBase {
     $form['audio_source'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Audio File Path'),
-      '#description' => $this->t('URL to the audio file to use for bacground playing. You may omit this and set "data-bg-audio-src" attribute of individual audio start buttons.'),
+      '#description' => $this->t('URL to the audio file to use for bacground playing.'),
       '#default_value' => $this->configuration['audio_source'],
+      '#required' => TRUE,
     ];
 
     $form['pause_during_transition'] = [
