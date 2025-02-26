@@ -2,6 +2,7 @@
 
 namespace Drupal\present_background_audio\Form;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
@@ -63,10 +64,12 @@ class PresentationAudioGuideForm extends EntityForm {
       $this->messenger()->addMessage($this->t('You have unsaved changes.'), MessengerInterface::TYPE_WARNING);
     }
 
-    /** @var \Drupal\present\Plugin\RevealJSPlugin\RevealJSPluginManager */
-    $plugin_manager = \Drupal::service('plugin.manager.revealjs_plugins');
-    /** @var \Drupal\present\Plugin\RevealJSPlugin\ConfigurableRevealJSPluginBase */
-    $background_audio = $plugin_manager->getPlugin('background_audio', $presentation);
+    $audio_guide_element_id = Html::getUniqueId('audio_guide');
+
+    $presentation_plugins = $presentation->getPluginInstances();
+    /** @var \Drupal\present_background_audio\Plugin\RevealJSPlugin\BackgroundAudio $background_audio */
+    $background_audio = $presentation_plugins['background_audio'];
+    $background_audio->setConfiguration(['audio_guide_id' => $audio_guide_element_id]);
 
     $slides = $presentation->getSlides();
     $regions = [];
@@ -190,6 +193,9 @@ class PresentationAudioGuideForm extends EntityForm {
         '#type' => 'audio_track_regions',
         '#audio_url' => !empty($start_button['audio']) ? $start_button['audio'] : $background_audio->getConfiguration()['audio_source'],
         '#default_value' => $audio_regions,
+        '#track_attributes' => [
+          'id' => $audio_guide_element_id,
+        ],
       ];
     }
     
