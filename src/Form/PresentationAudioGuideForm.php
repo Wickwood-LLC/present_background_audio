@@ -160,6 +160,9 @@ class PresentationAudioGuideForm extends EntityForm {
     $form['preview']['presentation'] = [
       '#type' => 'revealjs_presentation',
       '#presentation' => $presentation,
+      '#attributes' => [
+        'style' => ['margin: auto; resize: both;'],
+      ]
     ];
 
     $form['audio_guides'] = [
