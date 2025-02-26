@@ -263,7 +263,6 @@
         play_from_start_button.addEventListener('click', (event) => {
           event.preventDefault();
           ws.setTime(0);
-          ws.play();
         });
 
         let play_step_back = wrapper.querySelector('.audio-controls .audio-play-step-back');
@@ -271,7 +270,6 @@
           event.preventDefault();
           if (active_region) {
             ws.setTime(active_region.start);
-            ws.play();
           }
         });
 
