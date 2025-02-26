@@ -293,7 +293,11 @@
         let play_rate_value = wrapper.querySelector('.audio-play-rate-value');
         play_rate_input.addEventListener('change', (event) => {
           ws.setPlaybackRate(event.target.value);
-          play_rate_value.innerHTML = event.target.value + 'x';
+          play_rate_value.innerHTML = `${event.target.value}x`;
+        });
+        element.addEventListener('playback_rate', (event) => {
+          play_rate_input.value = event.detail.playback_rate;
+          play_rate_value.innerHTML = `${event.detail.playback_rate}x`;
         });
       });
     }

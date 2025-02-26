@@ -81,7 +81,7 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
         const plugin = this;
         let config = plugin.deck.getConfig();
         let audio_source;
-        let audio_guide
+        let audio_guide;
         if (plugin.audio_guide_id) {
             audio_guide = document.getElementById(plugin.audio_guide_id);
         }
@@ -92,8 +92,15 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
             audio_source = config.background_audio.source
         }
         if (audio_guide && audio_guide.wavesurfer) {
+            let playback_rate = 1;
+            let playback_rate_event = new CustomEvent('playback_rate', {detail: {playback_rate: playback_rate}});
             // We can only play presentation in normal speed thus audio also needs to be played in normal speed.
-            audio_guide.wavesurfer.setPlaybackRate(1);
+            audio_guide.wavesurfer.setPlaybackRate(playback_rate);
+            audio_guide.dispatchEvent(playback_rate_event);
+
+            audio_guide.emit
+            // Start from beginning.
+            audio_guide.wavesurfer.setTime(0);
 
             audio_guide.wavesurfer.play();
             plugin.controlConfigs();
