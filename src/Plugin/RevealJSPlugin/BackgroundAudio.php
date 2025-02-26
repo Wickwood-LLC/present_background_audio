@@ -18,6 +18,8 @@ class BackgroundAudio extends ConfigurableRevealJSPluginBase {
     return [
       'audio_source' => NULL,
       'pause_during_transition' => FALSE,
+      // ID of the HTML element with the audio guide built with wavesurfer.js.
+      'audio_guide_id' => NULL,
     ] + parent::defaultConfiguration();
   }
 
@@ -66,6 +68,7 @@ class BackgroundAudio extends ConfigurableRevealJSPluginBase {
     $config['background_audio'] = [
       'source' => $this->configuration['audio_source'],
       'pause_during_transition' => $this->configuration['pause_during_transition'],
+      'audio_guide_id' => $this->configuration['audio_guide_id'],
     ];
   }
 }
