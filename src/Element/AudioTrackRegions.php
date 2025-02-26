@@ -7,6 +7,8 @@ use Drupal\Core\Render\Attribute\RenderElement;
 use Drupal\Core\Render\Element\FormElementBase;
 use Drupal\present_background_audio\AudioTrackRegion;
 use Exception;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Render\Markup;
 
 /**
  * Provides a render element for an auido guide studio.
@@ -116,6 +118,27 @@ class AudioTrackRegions extends FormElementBase {
         'class' => ['audio-play-step-back'],
         'title' => t('Play step back'),
       ],
+    ];
+
+    $play_rate_options = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+    $play_rate_datalist_id = Html::getUniqueId('play-rate-datalist');
+    $play_rate_datalist = Markup::create("<datalist id='$play_rate_datalist_id'>" . implode('', array_map(function ($value) {
+      return '<option value="' . $value . '">' . $value . '</option>';
+    }, $play_rate_options)) . '</datalist>');
+
+    $element['play_rate'] = [
+      '#type' => 'range',
+      '#title' => t('Play rate'),
+      '#min' => 0.25,
+      '#max' => 2,
+      '#step' => 0.25,
+      '#default_value' => 1,
+      '#attributes' => [
+        'class' => ['audio-play-rate'],
+        'list' => $play_rate_datalist_id,
+      ],
+      '#suffix' => $play_rate_datalist,
+      '#field_suffix' => '<span class="audio-play-rate-value">1x</span>',
     ];
 
     $element['#element_validate'] = [[static::class, 'validateAudioGuide']];

@@ -287,6 +287,13 @@
         ws.on('finish', () => {
           play_button.classList.remove('playing');
         })
+
+        let play_rate_input = wrapper.querySelector('.audio-play-rate');
+        let play_rate_value = wrapper.querySelector('.audio-play-rate-value');
+        play_rate_input.addEventListener('change', (event) => {
+          ws.setPlaybackRate(event.target.value);
+          play_rate_value.innerHTML = event.target.value + 'x';
+        });
       });
     }
   }
