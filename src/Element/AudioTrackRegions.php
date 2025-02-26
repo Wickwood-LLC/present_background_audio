@@ -8,6 +8,7 @@ use Drupal\Core\Render\Element\FormElementBase;
 use Drupal\present_background_audio\AudioTrackRegion;
 use Exception;
 use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Render\Markup;
 
 /**
@@ -29,6 +30,7 @@ class AudioTrackRegions extends FormElementBase {
       '#default_value' => NULL, // This should be an array of AudioTrackRegion objects.
       '#configs' => [],
       '#attributes' => [],
+      '#track_attributes' => [],
       '#theme_wrappers' => ['form_element'],
       '#attached' => [
         'library' => ['present_background_audio/audio_guide'],
@@ -81,6 +83,8 @@ class AudioTrackRegions extends FormElementBase {
         ),
       ],
     ];
+
+    $element['audio_track']['#attributes'] = NestedArray::mergeDeep($element['audio_track']['#attributes'], $element['#track_attributes']);
 
     $element['region_data'] = [
       '#type' => 'hidden',
