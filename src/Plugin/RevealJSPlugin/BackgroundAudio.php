@@ -63,7 +63,9 @@ class BackgroundAudio extends ConfigurableRevealJSPluginBase {
    * {@inheritdoc}
    */
   public function alterRevealJSConfig(&$config) {
-    $config['background_audio'] = $this->configuration['audio_source'];
-    $config['background_audio_pause_during_transition'] = $this->configuration['pause_during_transition'];
+    $config['background_audio'] = [
+      'source' => $this->configuration['audio_source'],
+      'pause_during_transition' => $this->configuration['pause_during_transition'],
+    ];
   }
 }

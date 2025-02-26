@@ -7,13 +7,15 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
     configs_to_control: {autoSlide: 1, controls: false, keyboard: false},
     // If true, the audio will be paused during the transition between slides
     pause_during_transition: false,
+    audio_source : null,
     init: function(deck) {
         this.deck = deck;
         let reveal_element = deck.getRevealElement();
         let plugin = this;
         let config = deck.getConfig();
-        if ('background_audio_pause_during_transition' in config) {
-            plugin.pause_during_transition = config.background_audio_pause_during_transition;
+        if ('background_audio' in config) {
+            plugin.pause_during_transition = config.background_audio.pause_during_transition;
+            plugin.audio_source = config.background_audio.source;
         }
 
         // Get all start buttons
@@ -77,8 +79,8 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
         if (button.hasAttribute('data-bg-audio-src')) {
             audio_source = button.getAttribute('data-bg-audio-src');
         }
-        else if ('background_audio' in config) {
-            audio_source = config.background_audio;
+        else {
+            audio_source = config.background_audio.source
         }
         if (audio_source) {
             let audio = new Audio(audio_source);
