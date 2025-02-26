@@ -80,10 +80,14 @@
             if (!('color' in region_config)) {
               region_config.color = randomColor();
             }
+            // Create a copy of the region config.
+            // Otherwise the content we set with HTMLElement will be sent back to server
+            // and cause an error in processing data.
+            let region_config_copy = {...region_config};
             let label = document.createElement('strong');
             label.innerHTML = region_config.content;
-            region_config.content = label;
-            let region = regions_plugin.addRegion(region_config);
+            region_config_copy.content = label;
+            let region = regions_plugin.addRegion(region_config_copy);
             region.fixed_size = region_config.fixed_size;
             regions.push(region);
           });
