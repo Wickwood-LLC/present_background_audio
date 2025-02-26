@@ -6,6 +6,7 @@ use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\present\Plugin\RevealJSPlugin\RevealJSPluginManager;
 use Drupal\present_background_audio\AudioTrackRegion;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -56,6 +57,10 @@ class PresentationAudioGuideForm extends EntityForm {
       $form['#title'] = $this->t('<em>Presentation Audio Sync Studio for</em> @title', [
         '@title' => $presentation->label(),
       ]);
+    }
+
+    if ($form_state->get('preview')) {
+      $this->messenger()->addMessage($this->t('You have unsaved changes.'), MessengerInterface::TYPE_WARNING);
     }
 
     /** @var \Drupal\present\Plugin\RevealJSPlugin\RevealJSPluginManager */
@@ -147,17 +152,15 @@ class PresentationAudioGuideForm extends EntityForm {
       $slide_number++;
     }
 
-    if ($form_state->get('preview')) {
-      $form['preview'] = [
-        '#type' => 'details',
-        '#title' => $this->t('Preview'),
-        '#open' => TRUE,
-      ];
-      $form['preview']['presentation'] = [
-        '#type' => 'revealjs_presentation',
-        '#presentation' => $presentation,
-      ];
-    }
+    $form['preview'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Preview'),
+      '#open' => TRUE,
+    ];
+    $form['preview']['presentation'] = [
+      '#type' => 'revealjs_presentation',
+      '#presentation' => $presentation,
+    ];
 
     $form['audio_guides'] = [
       '#type' => 'details',
