@@ -147,6 +147,18 @@ class PresentationAudioGuideForm extends EntityForm {
       $slide_number++;
     }
 
+    if ($form_state->get('preview')) {
+      $form['preview'] = [
+        '#type' => 'details',
+        '#title' => $this->t('Preview'),
+        '#open' => TRUE,
+      ];
+      $form['preview']['presentation'] = [
+        '#type' => 'revealjs_presentation',
+        '#presentation' => $presentation,
+      ];
+    }
+
     $form['audio_guides'] = [
       '#type' => 'details',
       '#title' => $this->t('Audio guides'),
@@ -172,17 +184,6 @@ class PresentationAudioGuideForm extends EntityForm {
         '#type' => 'audio_track_regions',
         '#audio_url' => !empty($start_button['audio']) ? $start_button['audio'] : $background_audio->getConfiguration()['audio_source'],
         '#default_value' => $audio_regions,
-      ];
-    }
-    if ($form_state->get('preview')) {
-      $form['preview'] = [
-        '#type' => 'details',
-        '#title' => $this->t('Preview'),
-        '#open' => TRUE,
-      ];
-      $form['preview']['presentation'] = [
-        '#type' => 'revealjs_presentation',
-        '#presentation' => $presentation,
       ];
     }
     
