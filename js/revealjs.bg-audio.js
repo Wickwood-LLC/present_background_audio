@@ -5,6 +5,7 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
     deck: null,
     // If not null, it will either an Audio element or WaveSurfer instance.
     current_audio: null,
+    current_button: null,
     configs_to_control: {autoSlide: 1, controls: false, keyboard: false},
     // If true, the audio will be paused during the transition between slides
     pause_during_transition: false,
@@ -37,6 +38,15 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
             });
         });
         deck.on('slidechanged', (event) => {
+            if (plugin.current_button) {
+                let end_slide = plugin.current_button.getAttribute('data-bg-audio-end-slide');
+                if (end_slide) {
+                    if ( end_slide == (event.indexh + 1)) {
+                        // Previous slide is marked as end slide by the button thus stop auto-slide here.
+                        plugin.stopAudio();
+                    }
+                }
+            }
             if (plugin.current_audio && plugin.pause_during_transition) {
                 plugin.current_audio.pause();
             }
@@ -82,6 +92,9 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
         let config = plugin.deck.getConfig();
         let audio_source;
         let audio_guide;
+
+        plugin.current_button = button;
+
         if (plugin.audio_guide_id) {
             audio_guide = document.getElementById(plugin.audio_guide_id);
         }

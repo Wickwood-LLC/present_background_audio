@@ -92,23 +92,40 @@ class PresentationAudioGuideForm extends EntityForm {
 
         // $slide = array_shift($slides_copy);
         $slide_position = array_search($start_button_slide_index, $slides_indexes);
+        //  Remove any slides before the start button.
         $slides_indexes = array_slice($slides_indexes, $slide_position);
+        // Add first slide to the start button.
         $start_buttons[$start_button_slide_index]['slides'][] = array_shift($slides_indexes);
         while ($current_slide = reset($slides_indexes)) {
           if (in_array($current_slide, $start_button_slide_indxes)) {
+            // If this associated with another start button.
+            // Don't process further and ignore this slide.
             break;
           }
           $start_buttons[$start_button_slide_index]['slides'][] = array_shift($slides_indexes);
         }
 
       } while (!empty($start_button_slide_indxes));
+
+      foreach ($start_buttons as $start_button_slide_index => &$start_button) {
+        if (!empty($start_button['end_slide'])) {
+          $first_slide_number = array_search($start_button['slides'][0], $slides_indexes_original);
+          $end_slide_number = $start_button['end_slide'] - 1;
+          $end_slide_index =  $slides_indexes_original[$end_slide_number];
+          if ($end_slide_number > $first_slide_number && in_array($end_slide_index , $start_button['slides'])) {
+            // End slide  is after the start slide and is part of the start button slides alrady calculated.
+            $start_button['slides'] = array_slice($start_button['slides'], 0, array_search($end_slide_index, $start_button['slides']) + 1);
+          }
+        }
+      }
     }
 
     foreach ($start_buttons as $start_button_slide_index => &$start_button) {
       $start_button['regions'] = [];
       $start = 0;
       // $slide_number = 1;
-      foreach ($start_button['slides'] as $slide_index) {
+      $number_of_slides_of_start_button = count($start_button['slides']);
+      foreach ($start_button['slides'] as $index => $slide_index) {
         $slide = $slides[$slide_index];
         $slide_number = array_search($slide_index, $slides_indexes_original) + 1;
 
@@ -148,7 +165,7 @@ class PresentationAudioGuideForm extends EntityForm {
         }
 
         $transition_width = $transition_widths[$slide['transition']['speed']];
-        if (!$background_audio->getConfiguration()['pause_during_transition'] && $slide_number != count($slides)) {
+        if (!$background_audio->getConfiguration()['pause_during_transition'] && $index  != ($number_of_slides_of_start_button - 1)) {
           $start = $end;
           $end = $start + $transition_width;
           $start_button['regions'][] = AudioTrackRegion::create([
@@ -329,6 +346,8 @@ class PresentationAudioGuideForm extends EntityForm {
   /**
    * Scan the presentation for start buttons.
    *
+   * It will prepare a list of start buttons in the presentation qith the slide information they are on.
+   *
    */
   protected function scanStartButtons(Presentation $presentation): array {
     $start_buttons = [];
@@ -347,6 +366,7 @@ class PresentationAudioGuideForm extends EntityForm {
           // Get button specific audio if set.
           'audio' => $start_buttons_element->getAttribute('data-bg-audio-src'),
           'label' => $start_buttons_element->textContent,
+          'end_slide' => $start_buttons_element->getAttribute('data-bg-audio-end-slide'),
         ];
       }
     }
