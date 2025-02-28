@@ -41,7 +41,8 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
             if (plugin.current_button) {
                 let end_slide = plugin.current_button.getAttribute('data-bg-audio-end-slide');
                 if (end_slide) {
-                    if ( end_slide == (event.indexh + 1)) {
+                    if ( end_slide == (event.indexh)) {
+                        // Note: end slide is 1 based while indexh is 0 based.
                         // Previous slide is marked as end slide by the button thus stop auto-slide here.
                         plugin.stopAudio();
                     }
