@@ -181,7 +181,7 @@ class PresentationAudioGuideForm extends EntityForm {
 
     $form['audio_guides'] = [
       '#type' => 'details',
-      '#title' => $this->t('Audio guide'),
+      '#title' => $this->t('Audio'),
       '#open' => TRUE,
       '#tree' => TRUE,
     ];
