@@ -89,6 +89,7 @@
             region_config_copy.content = label;
             let region = regions_plugin.addRegion(region_config_copy);
             region.fixed_size = region_config.fixed_size;
+            region.type = region_config.type;
             regions.push(region);
           });
 
@@ -277,7 +278,15 @@
         play_step_back.addEventListener('click', (event) => {
           event.preventDefault();
           if (active_region) {
-            ws.setTime(active_region.start);
+            let current_region = active_region;
+            let previous_region;
+            while (previous_region = current_region.previous_region) {
+              current_region = previous_region;
+              if (current_region.type && current_region.type === 'transition') {
+                break;
+              }
+            }
+            ws.setTime(current_region.start);
           }
         });
 

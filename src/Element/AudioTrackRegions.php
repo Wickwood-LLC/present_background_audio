@@ -119,7 +119,7 @@ class AudioTrackRegions extends FormElementBase {
 
     $element['controls']['play_step_back'] = [
       '#type' => 'button',
-      '#value' => t('Play from start of region with cursor'),
+      '#value' => t('Play from start of last transition'),
       '#attributes' => [
         'class' => ['audio-play-step-back'],
         'title' => t('Play step back'),
