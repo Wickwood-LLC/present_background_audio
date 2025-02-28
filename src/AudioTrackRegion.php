@@ -4,12 +4,12 @@ namespace Drupal\present_background_audio;
 
 class AudioTrackRegion {
   /**
-   * Start of the region in seconds
+   * Start of the region in milliseconds
    */
   public float $start;
 
   /**
-   * End of the region in seconds
+   * End of the region in milliseconds
    */
   public float $end;
 
@@ -71,7 +71,7 @@ class AudioTrackRegion {
   }
 
   /**
-   * Get the duration of the region in seconds.
+   * Get the duration of the region in milliseconds.
    */
   public function getDuration(): float {
     return $this->end - $this->start;

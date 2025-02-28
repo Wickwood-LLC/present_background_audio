@@ -10,8 +10,8 @@
   function updateInputField(regions, regions_data, input_element) {
     let regions_data_copy = regions_data.slice();``
     regions.forEach((region, index) => {
-      regions_data_copy[index].start = region.start;
-      regions_data_copy[index].end = region.end;
+      regions_data_copy[index].start = Math.round(region.start * 1000);
+      regions_data_copy[index].end = Math.round(region.end * 1000);
     });
     input_element.value = JSON.stringify(regions_data_copy);
   }
@@ -87,8 +87,10 @@
             let label = document.createElement('strong');
             label.innerHTML = region_config.content;
             region_config_copy.content = label;
+            region_config_copy.start = region_config.start / 1000;
+            region_config_copy.end = region_config.end / 1000;
             let region = regions_plugin.addRegion(region_config_copy);
-            region.fixed_size = region_config.fixed_size;
+            region.fixed_size = region_config.fixed_size / 1000;
             region.type = region_config.type;
             regions.push(region);
           });

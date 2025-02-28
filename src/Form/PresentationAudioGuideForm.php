@@ -75,15 +75,15 @@ class PresentationAudioGuideForm extends EntityForm {
     $slides = $presentation->getSlides();
 
     $transition_widths = [
-      'default' => 0.8,
-      'fast' => 0.4,
-      'slow' => 1.2,
+      'default' => 800,
+      'fast' => 400,
+      'slow' => 1200,
     ];
 
     $start_buttons = $this->scanStartButtons($presentation);
+    $slides_indexes_original = array_keys($slides);
 
     $start_button_slide_indxes = array_keys($start_buttons);
-    $slides_indexes_original = array_keys($slides);
     $slides_indexes = array_keys($slides);
     do {
       // Take off the first start button and use it as the active one.
@@ -110,7 +110,8 @@ class PresentationAudioGuideForm extends EntityForm {
         $slide = $slides[$slide_index];
         $slide_number = array_search($slide_index, $slides_indexes_original) + 1;
 
-        $slide_duration = !empty($slide['autoslide']) ? intval($slide['autoslide']) / 1000 : 0;
+        // Milliseconds
+        $slide_duration = !empty($slide['autoslide']) ? intval($slide['autoslide']) : 100;
         $end = $start + $slide_duration;
         $start_button['regions'][] = AudioTrackRegion::create([
           'id' => "slide_" . $slide_index,
@@ -130,7 +131,7 @@ class PresentationAudioGuideForm extends EntityForm {
         $fragments = $xpath->query('//*[contains(@class, "fragment")]');
         foreach ($fragments as $fragment_index => $fragment) {
           /** @var \DOMElement $fragment */
-          $fragment_duration = !empty($fragment->getAttribute('data-autoslide')) ? intval($fragment->getAttribute('data-autoslide')) / 1000 : 0;
+          $fragment_duration = !empty($fragment->getAttribute('data-autoslide')) ? intval($fragment->getAttribute('data-autoslide')) : 100;
           $start = $end;
           $end = $start + $fragment_duration;
           $start_button['regions'][] = AudioTrackRegion::create([
@@ -264,7 +265,7 @@ class PresentationAudioGuideForm extends EntityForm {
             foreach ($fragments as $fragment_index => $fragment) {
               /** @var \DOMElement $fragment */
               if ($fragment_index == $region_fragment_index) {
-                $fragment->setAttribute('data-autoslide', $region->getDuration() * 1000);
+                $fragment->setAttribute('data-autoslide', $region->getDuration());
                 /** @var \DOMElement $body */
                 $body = $dom->getElementsByTagName('body')->item(0);
                 $children  = $body->childNodes;
@@ -279,7 +280,7 @@ class PresentationAudioGuideForm extends EntityForm {
             }
           }
           else {
-            $slide['autoslide'] = $region->getDuration() * 1000;
+            $slide['autoslide'] = $region->getDuration();
             $presentation->setSlide($slide_index, $slide);
           }
         }
