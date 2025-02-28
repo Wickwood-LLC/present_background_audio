@@ -268,13 +268,13 @@
           ws.playPause();
         });
 
-        let play_from_start_button = wrapper.querySelector('.audio-controls .audio-play-from-start');
+        let play_from_start_button = wrapper.querySelector('.audio-controls .audio-goto-start');
         play_from_start_button.addEventListener('click', (event) => {
           event.preventDefault();
           ws.setTime(0);
         });
 
-        let play_step_back = wrapper.querySelector('.audio-controls .audio-play-step-back');
+        let play_step_back = wrapper.querySelector('.audio-controls .audio-goto-step-back');
         play_step_back.addEventListener('click', (event) => {
           event.preventDefault();
           if (active_region) {

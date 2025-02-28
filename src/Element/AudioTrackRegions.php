@@ -104,8 +104,8 @@ class AudioTrackRegions extends FormElementBase {
       '#type' => 'button',
       '#value' => t('⏮'),
       '#attributes' => [
-        'class' => ['audio-play-from-start'],
-        'title' => t('Play from start'),
+        'class' => ['audio-goto-start'],
+        'title' => t('Go to start'),
       ],
     ];
     $element['controls']['play'] = [
@@ -119,9 +119,9 @@ class AudioTrackRegions extends FormElementBase {
 
     $element['controls']['play_step_back'] = [
       '#type' => 'button',
-      '#value' => t('Play from start of last transition'),
+      '#value' => t('Go to start of last transition'),
       '#attributes' => [
-        'class' => ['audio-play-step-back'],
+        'class' => ['audio-goto-step-back'],
         'title' => t('Play step back'),
       ],
     ];
