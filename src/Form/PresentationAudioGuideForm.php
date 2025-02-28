@@ -83,24 +83,26 @@ class PresentationAudioGuideForm extends EntityForm {
     $start_buttons = $this->scanStartButtons($presentation);
     $slides_indexes_original = array_keys($slides);
 
-    $start_button_slide_indxes = array_keys($start_buttons);
-    $slides_indexes = array_keys($slides);
-    do {
-      // Take off the first start button and use it as the active one.
-      $start_button_slide_index = array_shift($start_button_slide_indxes);
-      
-      // $slide = array_shift($slides_copy);
-      $slide_position = array_search($start_button_slide_index, $slides_indexes);
-      $slides_indexes = array_slice($slides_indexes, $slide_position);
-      $start_buttons[$start_button_slide_index]['slides'][] = array_shift($slides_indexes);
-      while ($current_slide = reset($slides_indexes)) {
-        if (in_array($current_slide, $start_button_slide_indxes)) {
-          break;
-        }
-        $start_buttons[$start_button_slide_index]['slides'][] = array_shift($slides_indexes);
-      }
+    if (count($start_buttons)) {
+      $start_button_slide_indxes = array_keys($start_buttons);
+      $slides_indexes = array_keys($slides);
+      do {
+        // Take off the first start button and use it as the active one.
+        $start_button_slide_index = array_shift($start_button_slide_indxes);
 
-    } while (!empty($start_button_slide_indxes));
+        // $slide = array_shift($slides_copy);
+        $slide_position = array_search($start_button_slide_index, $slides_indexes);
+        $slides_indexes = array_slice($slides_indexes, $slide_position);
+        $start_buttons[$start_button_slide_index]['slides'][] = array_shift($slides_indexes);
+        while ($current_slide = reset($slides_indexes)) {
+          if (in_array($current_slide, $start_button_slide_indxes)) {
+            break;
+          }
+          $start_buttons[$start_button_slide_index]['slides'][] = array_shift($slides_indexes);
+        }
+
+      } while (!empty($start_button_slide_indxes));
+    }
 
     foreach ($start_buttons as $start_button_slide_index => &$start_button) {
       $start_button['regions'] = [];
@@ -196,7 +198,7 @@ class PresentationAudioGuideForm extends EntityForm {
         ],
       ];
     }
-    
+
     return $form;
   }
 
@@ -249,7 +251,7 @@ class PresentationAudioGuideForm extends EntityForm {
         $slide_index = $match['slide_index'];
         $region_fragment_index = $match['fragment_index'] ?? NULL;
         $transition = $match['transition'] ?? NULL;
-  
+
         $slide = $presentation->getSlide($slide_index);
         if ($slide && !$transition) {
           if (isset($region_fragment_index) && $region_fragment_index !== '') {
@@ -258,7 +260,7 @@ class PresentationAudioGuideForm extends EntityForm {
             $dom->formatOutput = TRUE;
             // @ is to suppress warnings about malformed HTML.
             @$dom->loadHTML($slide['content']);
-  
+
             $xpath = new \DOMXPath($dom);
             // Query elements with the class "fragment"
             $fragments = $xpath->query('//*[contains(@class, "fragment")]');
