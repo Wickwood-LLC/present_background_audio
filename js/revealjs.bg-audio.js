@@ -56,6 +56,18 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
             if (plugin.current_audio && plugin.pause_during_transition) {
                 plugin.current_audio.play();
             }
+            // Hide the right button if there is a start button on the slide.
+            const start_buttons = event.currentSlide.querySelectorAll('[data-bg-audio-start-button]');
+            let reveal_element = plugin.deck.getRevealElement();
+            let right_buttons = reveal_element.querySelectorAll('.navigate-right');
+            right_buttons.forEach(child => {
+                if (start_buttons.length > 0) {
+                    child.style.display = 'none';
+                }
+                else {
+                    child.style.display = '';
+                }
+            });
         });
         deck.on('autoslideresumed', (event) => {
             if (plugin.current_audio) {
