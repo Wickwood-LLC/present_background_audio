@@ -68,9 +68,9 @@
         const randomColor = () => `rgba(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)}, 0.5)`
 
 
-        const hidden_input = wrapper.querySelector('input[type="hidden"]');
+        const regions_data_store = wrapper.querySelector('[class~="regions-data-store"]');
         // Get the region configs from the hidden input.
-        let region_configs = JSON.parse(hidden_input.value);
+        let region_configs = JSON.parse(regions_data_store.value);
         // List to keep regions in order.
         let regions = [];
         ws.on('decode', function (duration) {
@@ -262,7 +262,7 @@
         });
 
         regions_plugin.on('region-updated', (region, side) => {
-          updateInputField(regions, region_configs, hidden_input);
+          updateInputField(regions, region_configs, regions_data_store);
         });
         let play_button = wrapper.querySelector('.audio-controls .audio-play');
         play_button.addEventListener('click', (event) => {

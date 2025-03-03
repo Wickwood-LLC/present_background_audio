@@ -91,6 +91,9 @@ class AudioTrackRegions extends FormElementBase {
     $element['region_data'] = [
       '#type' => 'hidden',
       '#default_value' => json_encode($value),
+      '#attributes' => [
+        'class' => ['regions-data-store'],
+      ],
     ];
 
     $element['controls'] = [
