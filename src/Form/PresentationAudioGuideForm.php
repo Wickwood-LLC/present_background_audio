@@ -54,6 +54,7 @@ class PresentationAudioGuideForm extends EntityForm {
       $this->applyChangesToPresentation($form, $form_state);
       $presentation = $this->entity;
       $form_state->set('presentation', $presentation);
+      $form_state->set('preview', TRUE);
     }
 
     if (!$presentation = $form_state->get('presentation')) {
