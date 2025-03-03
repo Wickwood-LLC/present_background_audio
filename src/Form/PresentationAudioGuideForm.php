@@ -332,15 +332,15 @@ class PresentationAudioGuideForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function preview(array $form, FormStateInterface $form_state) {
-    $this->applyChangesToPresentation($form, $form_state);
-    /** @var \Drupal\present\Entity\Presentation $presentation */
-    $presentation = $this->entity;
+  // public function preview(array $form, FormStateInterface $form_state) {
+  //   $this->applyChangesToPresentation($form, $form_state);
+  //   /** @var \Drupal\present\Entity\Presentation $presentation */
+  //   $presentation = $this->entity;
 
-    $form_state->set('presentation', $presentation);
-    $form_state->set('preview', TRUE);
-    $form_state->setRebuild();
-  }
+  //   $form_state->set('presentation', $presentation);
+  //   $form_state->set('preview', TRUE);
+  //   $form_state->setRebuild();
+  // }
 
   /**
    * Returns the action form element for the current entity form.
@@ -357,11 +357,6 @@ class PresentationAudioGuideForm extends EntityForm {
     $actions['save_continue'] = $actions['submit'];
     $actions['save_continue']['#value'] = $this->t('Save and Continue');
 
-    $actions['preview'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Update Preview'),
-      '#submit' => ['::submitForm', '::preview'],
-    ];
     return $actions;
   }
 
