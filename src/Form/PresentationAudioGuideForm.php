@@ -47,6 +47,14 @@ class PresentationAudioGuideForm extends EntityForm {
    */
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
+    $form['#attributes']['id'] = 'presentation-audio-guide-form';
+
+    if ($audio_guides = $form_state->getValue('audio_guides')) {
+      // Ajax update of regions data.
+      $this->applyChangesToPresentation($form, $form_state);
+      $presentation = $this->entity;
+      $form_state->set('presentation', $presentation);
+    }
 
     if (!$presentation = $form_state->get('presentation')) {
       $presentation = $this->entity;
@@ -213,11 +221,24 @@ class PresentationAudioGuideForm extends EntityForm {
         '#track_attributes' => [
           'id' => $audio_guide_element_id,
         ],
+        '#ajax' => [
+          'callback' => [$this, 'updateAudioGuide'],
+          'wrapper' => $form['#attributes']['id'],
+          'event' => 'change',
+        ],
       ];
     }
 
     return $form;
   }
+
+  /**
+   * AJAX callback method.
+   */
+  public function updateAudioGuide(array &$form, FormStateInterface $form_state) {
+    return $form;
+  }
+
 
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);

@@ -98,6 +98,10 @@ class AudioTrackRegions extends FormElementBase {
       '#maxlength' => NULL,
     ];
 
+    if (isset($element['#ajax'])) {
+      $element['region_data']['#ajax'] = $element['#ajax'];
+    }
+
     $element['controls'] = [
       '#type' => 'container',
       '#attributes' => [

@@ -14,6 +14,11 @@
       regions_data_copy[index].end = Math.round(region.end * 1000);
     });
     input_element.value = JSON.stringify(regions_data_copy);
+    // Create a new 'change' event
+    var event = new Event('change');
+    // Dispatch it.
+    input_element.dispatchEvent(event);
+
   }
 
   Drupal.behaviors.audio_guide = {
