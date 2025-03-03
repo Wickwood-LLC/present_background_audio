@@ -89,11 +89,13 @@ class AudioTrackRegions extends FormElementBase {
     $element['audio_track']['#attributes'] = NestedArray::mergeDeep($element['audio_track']['#attributes'], $element['#track_attributes']);
 
     $element['region_data'] = [
-      '#type' => 'hidden',
+      '#type' => 'textfield',
       '#default_value' => json_encode($value),
       '#attributes' => [
         'class' => ['regions-data-store'],
+        'style' => 'display: none;',
       ],
+      '#maxlength' => NULL,
     ];
 
     $element['controls'] = [
