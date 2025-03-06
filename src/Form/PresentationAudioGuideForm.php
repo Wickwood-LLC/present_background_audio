@@ -152,7 +152,7 @@ class PresentationAudioGuideForm extends EntityForm {
         ]);
 
         $dom = new \DOMDocument();
-        $dom->loadHTML($slide['content']);
+        $dom->loadHTML($slide['content']['value']);
 
         $xpath = new \DOMXPath($dom);
         // Query elements with the class "fragment"
@@ -298,7 +298,7 @@ class PresentationAudioGuideForm extends EntityForm {
             $dom->preserveWhiteSpace = TRUE;
             $dom->formatOutput = TRUE;
             // @ is to suppress warnings about malformed HTML.
-            @$dom->loadHTML($slide['content']);
+            @$dom->loadHTML($slide['content']['value']);
 
             $xpath = new \DOMXPath($dom);
             // Query elements with the class "fragment"
@@ -314,7 +314,7 @@ class PresentationAudioGuideForm extends EntityForm {
                 foreach ($children as $child) {
                     $innerHTML .= $dom->saveHTML($child);
                 }
-                $slide['content'] = $innerHTML;
+                $slide['content']['value'] = $innerHTML;
                 $presentation->setSlide($slide_index, $slide);
                 break;
               }
@@ -370,7 +370,7 @@ class PresentationAudioGuideForm extends EntityForm {
     $start_buttons = [];
     foreach ($presentation->getSlides() as $slide_index =>$slide) {
       $dom = new \DOMDocument();
-      $dom->loadHTML($slide['content']);
+      $dom->loadHTML($slide['content']['value']);
 
       $buttons_xpath = new \DOMXPath($dom);
       // Query elements for start buttons.
