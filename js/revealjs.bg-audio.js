@@ -6,7 +6,7 @@ window.RevealBackgroundAudio = window.RevealBackgroundAudio || {
     // If not null, it will either an Audio element or WaveSurfer instance.
     current_audio: null,
     end_slide: null,
-    configs_to_control: {autoSlide: 1, controls: false, keyboard: false},
+    configs_to_control: {autoSlide: 1, controls: false, keyboard: false, autoSlideStoppable: false},
     // If true, the audio will be paused during the transition between slides
     pause_during_transition: false,
     audio_source : null,
