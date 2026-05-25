@@ -1,6 +1,6 @@
 name: Present Background Audio
 description: "Background Audio plugin for Reveal.js presentations by the Present module."
 type: module
-core_version_requirement: ^10.3
+core_version_requirement: ^10.3 || ^11
 dependencies:
   - present:present
